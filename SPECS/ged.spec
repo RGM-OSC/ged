@@ -1,7 +1,7 @@
 Summary: Generic Event Dispatcher
 Name:ged
 Version:1.5
-Release:9.eon
+Release:9.rgm
 Source:%{name}-%{version}.tar.gz
 BuildRoot:/tmp/%{name}-%{version}
 Group:Applications/Base
@@ -179,6 +179,9 @@ This is the devel part as you may want to write your own backend.
 /usr/lib64/pkgconfig/%{name}-%{version}.pc
 
 %changelog
+* Wed Feb 20 2019 Samuel Ronciaux <Samuel.ronciaux@gmail.com> - 1.5.9
+- Initial fork
+
 * Wed May 04 2016 Jean-Philippe Levy <jeanphilippe.levy@gmail.com> - 1.5.9  
 - Add systemd service
 - Fix do not copy gedhdb.cfg 
