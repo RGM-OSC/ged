@@ -28,8 +28,8 @@
 #endif
 
 #define GED_MAJOR		1						// major version
-#define GED_MINOR		5						// minor version (may impact backend data structure)
-#define GED_PATCH		4						// patch level (not impacting backend data structure)
+#define GED_MINOR		6						// minor version (may impact backend data structure)
+#define GED_PATCH		0						// patch level (not impacting backend data structure)
 #define GED_VERSION		(GED_MAJOR*10000+GED_MINOR*100+GED_PATCH)
 
 #define GED_MAJ(VERSION)	(VERSION/10000)

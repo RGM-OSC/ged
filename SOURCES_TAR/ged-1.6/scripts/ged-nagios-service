@@ -1,0 +1,51 @@
+#!/bin/sh
+# Send the informations to Event Browser (gedq)
+#
+# --- Input arguments
+
+#   var1    Contract -> CONTRACT="SCC"
+#   var2    Site -> SITE="`hostname`"
+#   var3    Priority -> PRIO=1
+#   var4    Criticity -> CRIT=1
+#   var5    extref_incident -> extref_incident=""
+
+# 	arg1	$HOSTNAME$
+#	arg2	$SERVICEDESC$ 
+#	arg3	$HOSTSTATE$ 
+#	arg5	$HOSTOUTPUT$
+#	arg6	$HOSTADDRESS$
+#	arg7	$HOSTALIAS$
+#	arg8	$HOSTGROUPS$
+
+bin="/srv/eyesofnetwork/ged/bin/gedq"
+. /srv/eyesofnetwork/ged/etc/event_rgm.cfg
+
+
+case "$3" in
+  OK)
+        $bin -push -type 1 "$CONTRACT" "$SITE" "$PRIO" "$CRIT" "0" "0" "$extref_incident" "$1" "$2" 0 "" "$4" "$5" "$6" "$7"
+        $bin -drop -type 1 "$CONTRACT" "$SITE" "$PRIO" "$CRIT" "0" "0" "$extref_incident" "$1" "$2" 0
+        $bin -drop -type 1 "$CONTRACT" "$SITE" "$PRIO" "$CRIT" "0" "0" "$extref_incident" "$1" "$2" 1
+        $bin -drop -type 1 "$CONTRACT" "$SITE" "$PRIO" "$CRIT" "0" "0" "$extref_incident" "$1" "$2" 2
+        $bin -drop -type 1 "$CONTRACT" "$SITE" "$PRIO" "$CRIT" "0" "0" "$extref_incident" "$1" "$2" 3 
+        ;;
+  WARNING)
+        $bin -push -type 1 "$CONTRACT" "$SITE" "$PRIO" "$CRIT" "0" "0" "$extref_incident" "$1" "$2" 1 "" "$4" "$5" "$6" "$7"
+        $bin -drop -type 1 "$CONTRACT" "$SITE" "$PRIO" "$CRIT" "0" "0" "$extref_incident" "$1" "$2" 2
+        $bin -drop -type 1 "$CONTRACT" "$SITE" "$PRIO" "$CRIT" "0" "0" "$extref_incident" "$1" "$2" 3
+        ;;
+  CRITICAL)
+        $bin -push -type 1 "$CONTRACT" "$SITE" "$PRIO" "$CRIT" "0" "0" "$extref_incident" "$1" "$2" 2 "" "$4" "$5" "$6" "$7"
+        $bin -drop -type 1 "$CONTRACT" "$SITE" "$PRIO" "$CRIT" "0" "0" "$extref_incident" "$1" "$2" 1
+        $bin -drop -type 1 "$CONTRACT" "$SITE" "$PRIO" "$CRIT" "0" "0" "$extref_incident" "$1" "$2" 3 
+        ;;
+  *)
+        $bin -push -type 1 "$CONTRACT" "$SITE" "$PRIO" "$CRIT" "0" "0" "$extref_incident" "$1" "$2" 3 "" "$4" "$5" "$6" "$7"
+        $bin -drop -type 1 "$CONTRACT" "$SITE" "$PRIO" "$CRIT" "0" "0" "$extref_incident" "$1" "$2" 1
+        $bin -drop -type 1 "$CONTRACT" "$SITE" "$PRIO" "$CRIT" "0" "0" "$extref_incident" "$1" "$2" 2
+        exit 1
+esac
+
+exit 0
+
+

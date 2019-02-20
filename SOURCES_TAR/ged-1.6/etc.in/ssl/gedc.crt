@@ -1,0 +1,70 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number: 2 (0x2)
+    Signature Algorithm: sha1WithRSAEncryption
+        Issuer: C=FR, ST=IDF, L=Paris, O=EON, CN=EON CA/emailAddress=support@eon.org
+        Validity
+            Not Before: Jun 14 15:12:33 2018 GMT
+            Not After : Jun 14 15:12:33 2019 GMT
+        Subject: C=FR, ST=IDF, L=Paris, O=EON, CN=gedc/emailAddress=support@eon.org
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (1024 bit)
+                Modulus:
+                    00:aa:44:6b:a6:0a:61:b6:fa:53:61:02:f3:48:5e:
+                    66:3f:d8:86:ef:9b:96:3f:7c:54:96:f2:3f:11:08:
+                    9d:0a:68:e9:bd:70:d4:8c:21:f9:1f:2f:26:10:75:
+                    c8:d9:3d:39:1a:19:78:16:3d:1f:f3:aa:4b:fa:ab:
+                    40:27:14:71:42:69:06:02:9c:46:34:33:c4:18:45:
+                    a5:c8:ac:17:23:74:af:1a:f2:b5:d3:70:3a:1c:47:
+                    26:b8:64:fe:4f:a1:a5:07:f5:6e:12:17:76:fb:8e:
+                    61:88:85:b1:7a:62:b2:a0:5a:e4:60:7b:4a:62:76:
+                    c8:73:77:3d:3e:ae:89:26:1f
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Basic Constraints: 
+                CA:FALSE
+            Netscape Comment: 
+                Easy-RSA Generated Certificate
+            X509v3 Subject Key Identifier: 
+                0A:68:B2:1A:4D:98:EF:96:3E:A7:17:68:4C:EE:A8:89:BB:4A:6B:BA
+            X509v3 Authority Key Identifier: 
+                keyid:BC:0C:8E:CC:1A:A2:3E:B1:FD:15:05:E7:34:AB:31:0C:14:91:D7:53
+                DirName:/C=FR/ST=IDF/L=Paris/O=EON/CN=EON CA/emailAddress=support@eon.org
+                serial:BE:2D:DC:6A:FF:0A:AC:28
+
+            X509v3 Extended Key Usage: 
+                TLS Web Client Authentication
+            X509v3 Key Usage: 
+                Digital Signature
+    Signature Algorithm: sha1WithRSAEncryption
+         b7:6e:e9:98:c9:72:e4:39:42:5c:87:e8:ab:f9:df:cd:41:18:
+         9c:b2:e7:19:2b:59:23:20:af:7e:94:7a:bc:b4:2e:cd:86:33:
+         7c:0d:0b:3d:27:03:2a:d2:3f:29:16:6c:26:70:65:43:ca:db:
+         e7:d6:81:0f:e2:05:67:a1:75:34:a9:31:8d:5a:5c:64:2c:53:
+         26:a8:18:c0:f8:20:31:17:b8:8d:e3:4d:dd:72:a4:8f:31:a4:
+         71:9e:43:60:98:a8:ac:66:9f:6e:7e:9c:f2:cc:cc:d0:a9:a6:
+         ad:84:84:fc:93:97:73:2d:a5:8c:3f:73:b9:a2:81:d2:a3:56:
+         34:b9
+-----BEGIN CERTIFICATE-----
+MIIDaDCCAtGgAwIBAgIBAjANBgkqhkiG9w0BAQUFADBqMQswCQYDVQQGEwJGUjEM
+MAoGA1UECBMDSURGMQ4wDAYDVQQHEwVQYXJpczEMMAoGA1UEChMDRU9OMQ8wDQYD
+VQQDEwZFT04gQ0ExHjAcBgkqhkiG9w0BCQEWD3N1cHBvcnRAZW9uLm9yZzAeFw0x
+ODA2MTQxNTEyMzNaFw0xOTA2MTQxNTEyMzNaMGgxCzAJBgNVBAYTAkZSMQwwCgYD
+VQQIEwNJREYxDjAMBgNVBAcTBVBhcmlzMQwwCgYDVQQKEwNFT04xDTALBgNVBAMT
+BGdlZGMxHjAcBgkqhkiG9w0BCQEWD3N1cHBvcnRAZW9uLm9yZzCBnzANBgkqhkiG
+9w0BAQEFAAOBjQAwgYkCgYEAqkRrpgphtvpTYQLzSF5mP9iG75uWP3xUlvI/EQid
+CmjpvXDUjCH5Hy8mEHXI2T05Ghl4Fj0f86pL+qtAJxRxQmkGApxGNDPEGEWlyKwX
+I3SvGvK103A6HEcmuGT+T6GlB/VuEhd2+45hiIWxemKyoFrkYHtKYnbIc3c9Pq6J
+Jh8CAwEAAaOCAR4wggEaMAkGA1UdEwQCMAAwLQYJYIZIAYb4QgENBCAWHkVhc3kt
+UlNBIEdlbmVyYXRlZCBDZXJ0aWZpY2F0ZTAdBgNVHQ4EFgQUCmiyGk2Y75Y+pxdo
+TO6oibtKa7owgZwGA1UdIwSBlDCBkYAUvAyOzBqiPrH9FQXnNKsxDBSR11OhbqRs
+MGoxCzAJBgNVBAYTAkZSMQwwCgYDVQQIEwNJREYxDjAMBgNVBAcTBVBhcmlzMQww
+CgYDVQQKEwNFT04xDzANBgNVBAMTBkVPTiBDQTEeMBwGCSqGSIb3DQEJARYPc3Vw
+cG9ydEBlb24ub3JnggkAvi3cav8KrCgwEwYDVR0lBAwwCgYIKwYBBQUHAwIwCwYD
+VR0PBAQDAgeAMA0GCSqGSIb3DQEBBQUAA4GBALdu6ZjJcuQ5QlyH6Kv5381BGJyy
+5xkrWSMgr36Uery0Ls2GM3wNCz0nAyrSPykWbCZwZUPK2+fWgQ/iBWehdTSpMY1a
+XGQsUyaoGMD4IDEXuI3jTd1ypI8xpHGeQ2CYqKxmn25+nPLMzNCppq2EhPyTl3Mt
+pYw/c7migdKjVjS5
+-----END CERTIFICATE-----

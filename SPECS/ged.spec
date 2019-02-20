@@ -1,7 +1,7 @@
 Summary: Generic Event Dispatcher
 Name:ged
-Version:1.5
-Release:9.rgm
+Version:1.6
+Release:0.rgm
 Source:%{name}-%{version}.tar.gz
 BuildRoot:/tmp/%{name}-%{version}
 Group:Applications/Base
@@ -179,6 +179,9 @@ This is the devel part as you may want to write your own backend.
 /usr/lib64/pkgconfig/%{name}-%{version}.pc
 
 %changelog
+* Wed Feb 20 2019 Michael Aubertin <maubertin@fr.scc.com> - 1.6.0
+- Prepare RGM customization
+
 * Wed Feb 20 2019 Samuel Ronciaux <Samuel.ronciaux@gmail.com> - 1.5.9
 - Initial fork
 

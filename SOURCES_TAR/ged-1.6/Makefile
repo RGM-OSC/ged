@@ -22,14 +22,14 @@
 prefix	       = /usr
 
 # target name and modules
-LIBGED	      := libged-1.5.so
-LIBGEDQ	      := libgedq-1.5.so
-LIBSGED	      := libged-1.5.a
-LIBSGEDQ      := libgedq-1.5.a
+LIBGED	      := libged-1.6.so
+LIBGEDQ	      := libgedq-1.6.so
+LIBSGED	      := libged-1.6.a
+LIBSGEDQ      := libgedq-1.6.a
 GED	      := ged
 GEDQ	      := gedq
-MODDUMMY      := geddummy-1.5.so
-MODMYSQL      := gedmysql-1.5.so
+MODDUMMY      := geddummy-1.6.so
+MODMYSQL      := gedmysql-1.6.so
 #MODHDB	      := gedhdb-1.5.so
 #MODTDB	      := gedtdb-1.5.so
 #MOD	      := $(MODDUMMY) $(MODHDB) $(MODMYSQL)
@@ -181,11 +181,11 @@ $(LIBSGEDQ) : $(GEDQOBJS)
 	@ar cr  $(LIBSGEDQ) $^
 	@ranlib $(LIBSGEDQ)
 
-gedmysql-1.5.so : $(SRCCOR)/cgedbackendmysql.c
+gedmysql-1.6.so : $(SRCCOR)/cgedbackendmysql.c
 	@echo "[LK] $@"
 	@$(CC) -shared $(GEDFLAGS) $^ -o $@ $(MYSQLLIBS)
 
-geddummy-1.5.so : $(SRCCOR)/cgedbackenddummy.c
+geddummy-1.6.so : $(SRCCOR)/cgedbackenddummy.c
 	@echo "[LK] $@"
 	@$(CC) -shared $(GEDFLAGS) $^ -o $@
 
