@@ -146,6 +146,7 @@ This is the devel part as you may want to write your own backend.
 %config(noreplace) /srv/eyesofnetwork/%{name}-%{version}/etc/gedq.cfg
 %config(noreplace) /srv/eyesofnetwork/%{name}-%{version}/etc/gedp.cfg
 %config(noreplace) /srv/eyesofnetwork/%{name}-%{version}/etc/gedt.cfg
+%config(noreplace) /srv/eyesofnetwork/%{name}-%{version}/etc/event_rgm.cfg
 %config(noreplace) /srv/eyesofnetwork/%{name}-%{version}/etc/bkd/geddummy.cfg
 %{_unitdir}/gedd.service
 /srv/eyesofnetwork/%{name}-%{version}/etc/ssl
