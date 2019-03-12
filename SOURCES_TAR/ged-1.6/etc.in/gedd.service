@@ -5,7 +5,7 @@ After=mariadb.service
 
 [Service]
 Type=forking
-ExecStart=/srv/eyesofnetwork/ged/bin/ged -c /srv/eyesofnetwork/ged/etc/ged.cfg
+ExecStart=/srv/rgm/ged/bin/ged -c /srv/rgm/ged/etc/ged.cfg
 
 [Install]
 WantedBy=multi-user.target

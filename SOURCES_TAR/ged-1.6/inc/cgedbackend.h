@@ -62,7 +62,7 @@ TGEDPktCfgChange;
 //----------------------------------------------------------------------------------------------------------------------------------------
 
 const static CString GEDCfgCacheFile		("cfg_cache");
-const static CString GED_CFG_CACHE_FILE_DFT 	("/srv/eyesofnetwork/ged/var/cache/ged.dat");
+const static CString GED_CFG_CACHE_FILE_DFT 	("/srv/rgm/ged/var/cache/ged.dat");
 
 //----------------------------------------------------------------------------------------------------------------------------------------
 // abstract backend api

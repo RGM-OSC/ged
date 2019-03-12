@@ -11,7 +11,7 @@
 #       arg7    $HOSTGROUPS$
 #       arg8    $SERVICEGROUPS$
 
-bin="/srv/eyesofnetwork/ged/bin/gedq"
+bin="/srv/rgm/ged/bin/gedq"
 
 case "$3" in
   INFORMATION|INFORMATIONAL)

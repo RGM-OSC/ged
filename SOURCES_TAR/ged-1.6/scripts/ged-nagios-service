@@ -17,8 +17,8 @@
 #	arg7	$HOSTALIAS$
 #	arg8	$HOSTGROUPS$
 
-bin="/srv/eyesofnetwork/ged/bin/gedq"
-. /srv/eyesofnetwork/ged/etc/event_rgm.cfg
+bin="/srv/rgm/ged/bin/gedq"
+. /srv/rgm/ged/etc/event_rgm.cfg
 
 
 case "$3" in

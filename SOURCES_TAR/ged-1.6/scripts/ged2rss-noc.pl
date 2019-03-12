@@ -4,7 +4,7 @@
 #    ged2rss.pl
 #
 # License: GPL
-# michael.aubertin@gmail.com from EyesOfNetwork Team
+# michael.aubertin@gmail.com from rgm Team
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -52,14 +52,14 @@ $ENV{'ENV'}='';
 $Revision="0.2";
 
 my $DB_USER = "gedadmin";
-my $DB_PASS = "whaza";
+my $DB_PASS = "0rd0-c0m1735-b47h0n143";
 
-my $EON_Host = "172.16.129.3";
-#my $EON_Host = `/bin/hostname | /usr/bin/tr '\n' ' ' | /bin/sed -e 's: ::g'`;
+my $RGM_Host = "172.16.129.3";
+#my $rgm_Host = `/bin/hostname | /usr/bin/tr '\n' ' ' | /bin/sed -e 's: ::g'`;
 my $RSS_Filter_Name = "";
-my $RSS_Path="/srv/eyesofnetwork/ged/var/www/";
-my $RSS_File="/srv/eyesofnetwork/ged/var/www/rss.xml";
-my $FILTER_Path="/srv/eyesofnetwork/eonweb/cache";
+my $RSS_Path="/srv/rgm/ged/var/www/";
+my $RSS_File="/srv/rgm/ged/var/www/rss.xml";
+my $FILTER_Path="/srv/rgm/rgmweb/cache";
 my $GetGedFilterList="/bin/ls $FILTER_Path/*-ged.xml 2> /dev/null";
 my $db_ged = DBI->connect('DBI:mysql:ged', $DB_USER, $DB_PASS ) || die "Could not connect to database: $DBI::errstr";
 my $db_lilac = DBI->connect('DBI:mysql:lilac', $DB_USER, $DB_PASS ) || die "Could not connect to database: $DBI::errstr";
@@ -88,7 +88,7 @@ sub print_help () {
 
 sub create_xml_rss_file ($;$) {
 
-    my $RSS_Filter_Path = "/srv/eyesofnetwork/ged/var/www/";
+    my $RSS_Filter_Path = "/srv/rgm/ged/var/www/";
     $RSS_Filter_Name = shift;
     
     # Handle here invalid filter name.
@@ -127,11 +127,11 @@ sub write_event_host_to_rss ($) {
 
       if ( $event->{ service } eq "HOSTDOWN" || $event->{ service } eq "HOST UNREACHABLE" )
       {
-        print FileRSS "<link>https://$EON_Host/thruk/cgi-bin/extinfo.cgi?type=1&amp;host=",$event->{ equipment },"</link>\n";
+        print FileRSS "<link>https://$rgm_Host/thruk/cgi-bin/extinfo.cgi?type=1&amp;host=",$event->{ equipment },"</link>\n";
       }
       else
       {
-        print FileRSS "<link>https://$EON_Host/thruk/cgi-bin/extinfo.cgi?type=2&amp;host=",$event->{ equipment },"&amp;service=",$event->{ service },"</link>\n";
+        print FileRSS "<link>https://$rgm_Host/thruk/cgi-bin/extinfo.cgi?type=2&amp;host=",$event->{ equipment },"&amp;service=",$event->{ service },"</link>\n";
       }
       print FileRSS "</item>\n";
    }
@@ -282,7 +282,7 @@ $opt_t = $utils::TIMEOUT ;      # default timeout
 
 if ($opt_h) {print_help(); exit $ERRORS{'OK'};}
 
-my $gedq = "/srv/eyesofnetwork/ged/bin/gedq" ;
+my $gedq = "/srv/rgm/ged/bin/gedq" ;
 
 unless (-x $gedq ) {
         print "Cannot find \"$gedq\"\n";
@@ -373,9 +373,9 @@ foreach my $CurrentUser(@UsersList) # Loop on each User
         my $xml2 = new XML::Simple (KeyAttr=>'filter');
         my $MainType='';
         
-        my $CurrentFilterXMLFile = $xml2->XMLin("/srv/eyesofnetwork/eonweb/cache/".$CurrentUser."-ged.xml");
+        my $CurrentFilterXMLFile = $xml2->XMLin("/srv/rgm/rgmweb/cache/".$CurrentUser."-ged.xml");
         
-        print "Main -> /srv/eyesofnetwork/eonweb/cache/".$CurrentUser."-ged.xml \n" if $verbose;
+        print "Main -> /srv/rgm/rgmweb/cache/".$CurrentUser."-ged.xml \n" if $verbose;
         
         my $e;
         my $filter;

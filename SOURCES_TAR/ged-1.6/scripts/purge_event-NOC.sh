@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CONTRACT="`cat /srv/eyesofnetwork/nagios/etc/resource.cfg | grep USER23 | cut -d'=' -f2`"
+CONTRACT="`cat /srv/rgm/nagios/etc/resource.cfg | grep USER23 | cut -d'=' -f2`"
 
 if [ ! -n "$1" ]; then
 	echo "You must specified a time in seconds for purge time."
@@ -17,8 +17,8 @@ CurrentGedActive="`mktemp /tmp/tmp-internal/CurrentGed-XXXXX`"
 
 CurrentDate="`date +%s`"
 
-echo "select id,equipment,service,state from ged.nagios_queue_active where l_sec < `expr $CurrentDate - $GapTime` ;" | mysql -u root --password=root66 | tr '\t' ';' | sed -e 's: :@@:g' | grep -v "^id;" > ${CurrentGedActive}
-awk 'BEGIN { printf("GET services\nColumns: host_name service_description state notifications_enabled\n");}' | /srv/eyesofnetwork/mk-livestatus/bin/unixcat /srv/eyesofnetwork/nagios/var/log/rw/live > ${CurrentStatus}
+echo "select id,equipment,service,state from ged.nagios_queue_active where l_sec < `expr $CurrentDate - $GapTime` ;" | mysql -u gedadmin --password='0rd0-c0m1735-b47h0n143' | tr '\t' ';' | sed -e 's: :@@:g' | grep -v "^id;" > ${CurrentGedActive}
+awk 'BEGIN { printf("GET services\nColumns: host_name service_description state notifications_enabled\n");}' | /srv/rgm/mk-livestatus/bin/unixcat /srv/rgm/nagios/var/log/rw/live > ${CurrentStatus}
 
 for i in `cat $CurrentGedActive`; do
 	ID="`echo $i | cut -d';' -f1`"
@@ -43,8 +43,8 @@ for i in `cat $CurrentGedActive`; do
 		
 	if [[ $EraseEquip == 0 || $EraseService == 0 ]]; then
 		echo "Droping event concerning $EQUIP and $SERV on state $STATE."
-		echo "/srv/eyesofnetwork/ged/bin/gedq -drop -type 1 $CONTRACT $EQUIP "`echo $SERV | sed -e 's:@@: :g'`" $STATE"
-		/srv/eyesofnetwork/ged/bin/gedq -drop -type 1 $CONTRACT $EQUIP "`echo $SERV | sed -e 's:@@: :g'`" $STATE
+		echo "/srv/rgm/ged/bin/gedq -drop -type 1 $CONTRACT $EQUIP "`echo $SERV | sed -e 's:@@: :g'`" $STATE"
+		/srv/rgm/ged/bin/gedq -drop -type 1 $CONTRACT $EQUIP "`echo $SERV | sed -e 's:@@: :g'`" $STATE
 		continue
 	fi
 		
@@ -56,38 +56,38 @@ for i in `cat $CurrentGedActive`; do
     if [ "$NOTIFENABLED" = "0" ]; then
        #Drop because of notification disabled
        echo "Notification disabled for $EQUIP/$SERV. Acknoledging event."
-		/srv/eyesofnetwork/ged/bin/gedq -push -type 1 -queue history $CONTRACT $EQUIP "`echo $SERV | sed -e 's:@@: :g'`" 0
-		/srv/eyesofnetwork/ged/bin/gedq -drop -type 1 $CONTRACT $EQUIP "`echo $SERV | sed -e 's:@@: :g'`" 3
-		/srv/eyesofnetwork/ged/bin/gedq -drop -type 1 $CONTRACT $EQUIP "`echo $SERV | sed -e 's:@@: :g'`" 2
-		/srv/eyesofnetwork/ged/bin/gedq -drop -type 1 $CONTRACT $EQUIP "`echo $SERV | sed -e 's:@@: :g'`" 1
+		/srv/rgm/ged/bin/gedq -push -type 1 -queue history $CONTRACT $EQUIP "`echo $SERV | sed -e 's:@@: :g'`" 0
+		/srv/rgm/ged/bin/gedq -drop -type 1 $CONTRACT $EQUIP "`echo $SERV | sed -e 's:@@: :g'`" 3
+		/srv/rgm/ged/bin/gedq -drop -type 1 $CONTRACT $EQUIP "`echo $SERV | sed -e 's:@@: :g'`" 2
+		/srv/rgm/ged/bin/gedq -drop -type 1 $CONTRACT $EQUIP "`echo $SERV | sed -e 's:@@: :g'`" 1
     else
 		if [[ "$EQUIPN" = "$EQUIP" && "$SERVN" = "$SERV" ]]; then
 			echo -n "The event $EQUIP of $SERV is in state $STATE."
 			if [ ! "$STATEN" = "$STATE" ]; then
 				echo " This is not a normal state. Let's update the event...."
 				if [ "$STATEN" = "3" ]; then
-					/srv/eyesofnetwork/ged/bin/gedq -push -type 1 $CONTRACT $EQUIP "`echo $SERV | sed -e 's:@@: :g'`" $STATEN
-					/srv/eyesofnetwork/ged/bin/gedq -drop -type 1 $CONTRACT $EQUIP "`echo $SERV | sed -e 's:@@: :g'`" $STATE
-					/srv/eyesofnetwork/ged/bin/gedq -drop -type 1 $CONTRACT $EQUIP "`echo $SERV | sed -e 's:@@: :g'`" $STATEN
+					/srv/rgm/ged/bin/gedq -push -type 1 $CONTRACT $EQUIP "`echo $SERV | sed -e 's:@@: :g'`" $STATEN
+					/srv/rgm/ged/bin/gedq -drop -type 1 $CONTRACT $EQUIP "`echo $SERV | sed -e 's:@@: :g'`" $STATE
+					/srv/rgm/ged/bin/gedq -drop -type 1 $CONTRACT $EQUIP "`echo $SERV | sed -e 's:@@: :g'`" $STATEN
 					#Unknow in Nagios
 				fi
 				if [ "$STATEN" = "2" ]; then
-					/srv/eyesofnetwork/ged/bin/gedq -push -type 1 $CONTRACT $EQUIP "`echo $SERV | sed -e 's:@@: :g'`" $STATEN
-					/srv/eyesofnetwork/ged/bin/gedq -drop -type 1 $CONTRACT $EQUIP "`echo $SERV | sed -e 's:@@: :g'`" $STATE
-					/srv/eyesofnetwork/ged/bin/gedq -drop -type 1 $CONTRACT $EQUIP "`echo $SERV | sed -e 's:@@: :g'`" $STATEN
+					/srv/rgm/ged/bin/gedq -push -type 1 $CONTRACT $EQUIP "`echo $SERV | sed -e 's:@@: :g'`" $STATEN
+					/srv/rgm/ged/bin/gedq -drop -type 1 $CONTRACT $EQUIP "`echo $SERV | sed -e 's:@@: :g'`" $STATE
+					/srv/rgm/ged/bin/gedq -drop -type 1 $CONTRACT $EQUIP "`echo $SERV | sed -e 's:@@: :g'`" $STATEN
 					#CRITICAL in Nagios
 				fi
 				if [ "$STATEN" = "1" ]; then
-					/srv/eyesofnetwork/ged/bin/gedq -push -type 1 $CONTRACT $EQUIP "`echo $SERV | sed -e 's:@@: :g'`" $STATEN
-					/srv/eyesofnetwork/ged/bin/gedq -drop -type 1 $CONTRACT $EQUIP "`echo $SERV | sed -e 's:@@: :g'`" $STATE
-					/srv/eyesofnetwork/ged/bin/gedq -drop -type 1 $CONTRACT $EQUIP "`echo $SERV | sed -e 's:@@: :g'`" $STATEN
+					/srv/rgm/ged/bin/gedq -push -type 1 $CONTRACT $EQUIP "`echo $SERV | sed -e 's:@@: :g'`" $STATEN
+					/srv/rgm/ged/bin/gedq -drop -type 1 $CONTRACT $EQUIP "`echo $SERV | sed -e 's:@@: :g'`" $STATE
+					/srv/rgm/ged/bin/gedq -drop -type 1 $CONTRACT $EQUIP "`echo $SERV | sed -e 's:@@: :g'`" $STATEN
 					#WARNING in Nagios
 				fi
 				if [ "$STATEN" = "0" ]; then
 					#OK in Nagios
-					/srv/eyesofnetwork/ged/bin/gedq -push -type 1 $CONTRACT $EQUIP "`echo $SERV | sed -e 's:@@: :g'`" $STATEN
-					/srv/eyesofnetwork/ged/bin/gedq -drop -type 1 $CONTRACT $EQUIP "`echo $SERV | sed -e 's:@@: :g'`" $STATEN
-					/srv/eyesofnetwork/ged/bin/gedq -drop -type 1 $CONTRACT $EQUIP "`echo $SERV | sed -e 's:@@: :g'`" $STATE
+					/srv/rgm/ged/bin/gedq -push -type 1 $CONTRACT $EQUIP "`echo $SERV | sed -e 's:@@: :g'`" $STATEN
+					/srv/rgm/ged/bin/gedq -drop -type 1 $CONTRACT $EQUIP "`echo $SERV | sed -e 's:@@: :g'`" $STATEN
+					/srv/rgm/ged/bin/gedq -drop -type 1 $CONTRACT $EQUIP "`echo $SERV | sed -e 's:@@: :g'`" $STATE
 				fi
 			else
 				echo " This is a normal state."

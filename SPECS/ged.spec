@@ -1,7 +1,7 @@
 Summary: Generic Event Dispatcher
 Name:ged
 Version:1.6
-Release:0.rgm
+Release:1.rgm
 Source:%{name}-%{version}.tar.gz
 BuildRoot:/tmp/%{name}-%{version}
 Group:Applications/Base
@@ -77,54 +77,54 @@ This is the devel part as you may want to write your own backend.
 
 %install
 	rm -rf ${RPM_BUILD_ROOT}
-	mkdir -p ${RPM_BUILD_ROOT}/srv/eyesofnetwork/%{name}-%{version}/bin
-        mkdir -p ${RPM_BUILD_ROOT}/srv/eyesofnetwork/%{name}-%{version}/etc/ssl/easy-rsa
-        mkdir -p ${RPM_BUILD_ROOT}/srv/eyesofnetwork/%{name}-%{version}/etc/bkd
+	mkdir -p ${RPM_BUILD_ROOT}/srv/rgm/%{name}-%{version}/bin
+        mkdir -p ${RPM_BUILD_ROOT}/srv/rgm/%{name}-%{version}/etc/ssl/easy-rsa
+        mkdir -p ${RPM_BUILD_ROOT}/srv/rgm/%{name}-%{version}/etc/bkd
         mkdir -p ${RPM_BUILD_ROOT}/etc/cron.d
         mkdir -p ${RPM_BUILD_ROOT}/etc/httpd/conf.d
         mkdir -p ${RPM_BUILD_ROOT}/usr/lib64/pkgconfig
-        mkdir -p ${RPM_BUILD_ROOT}/srv/eyesofnetwork/%{name}-%{version}/lib64
-        mkdir -p ${RPM_BUILD_ROOT}/srv/eyesofnetwork/%{name}-%{version}/man/man8
-        mkdir -p ${RPM_BUILD_ROOT}/srv/eyesofnetwork/%{name}-%{version}/scripts
-        mkdir -p ${RPM_BUILD_ROOT}/srv/eyesofnetwork/%{name}-%{version}/var/www/
+        mkdir -p ${RPM_BUILD_ROOT}/srv/rgm/%{name}-%{version}/lib64
+        mkdir -p ${RPM_BUILD_ROOT}/srv/rgm/%{name}-%{version}/man/man8
+        mkdir -p ${RPM_BUILD_ROOT}/srv/rgm/%{name}-%{version}/scripts
+        mkdir -p ${RPM_BUILD_ROOT}/srv/rgm/%{name}-%{version}/var/www/
 	mkdir -p ${RPM_BUILD_ROOT}%{_unitdir}
 
         install -m 640 etc.in/ged2rss ${RPM_BUILD_ROOT}/etc/cron.d/
         install -m 640 etc.in/purge_ged ${RPM_BUILD_ROOT}/etc/cron.d/
         install -m 640 etc.in/ged_rss.conf ${RPM_BUILD_ROOT}/etc/httpd/conf.d/
-        install -m 666 etc.in/*.cfg ${RPM_BUILD_ROOT}/srv/eyesofnetwork/%{name}-%{version}/etc
-        install -m 666 etc.in/bkd/gedmysql.cfg ${RPM_BUILD_ROOT}/srv/eyesofnetwork/%{name}-%{version}/etc/bkd
-        install -m 666 etc.in/bkd/geddummy.cfg ${RPM_BUILD_ROOT}/srv/eyesofnetwork/%{name}-%{version}/etc/bkd
-        install -m 755 ged ${RPM_BUILD_ROOT}/srv/eyesofnetwork/%{name}-%{version}/bin
-        install -m 755 gedq ${RPM_BUILD_ROOT}/srv/eyesofnetwork/%{name}-%{version}/bin
-        install -m 755 gedbackup ${RPM_BUILD_ROOT}/srv/eyesofnetwork/%{name}-%{version}/bin
-        install -m 755 gedrestore ${RPM_BUILD_ROOT}/srv/eyesofnetwork/%{name}-%{version}/bin
-        install -m 655 %{name}dummy-%{version}.so %{name}mysql-%{version}.so ${RPM_BUILD_ROOT}/srv/eyesofnetwork/%{name}-%{version}/lib64
+        install -m 666 etc.in/*.cfg ${RPM_BUILD_ROOT}/srv/rgm/%{name}-%{version}/etc
+        install -m 666 etc.in/bkd/gedmysql.cfg ${RPM_BUILD_ROOT}/srv/rgm/%{name}-%{version}/etc/bkd
+        install -m 666 etc.in/bkd/geddummy.cfg ${RPM_BUILD_ROOT}/srv/rgm/%{name}-%{version}/etc/bkd
+        install -m 755 ged ${RPM_BUILD_ROOT}/srv/rgm/%{name}-%{version}/bin
+        install -m 755 gedq ${RPM_BUILD_ROOT}/srv/rgm/%{name}-%{version}/bin
+        install -m 755 gedbackup ${RPM_BUILD_ROOT}/srv/rgm/%{name}-%{version}/bin
+        install -m 755 gedrestore ${RPM_BUILD_ROOT}/srv/rgm/%{name}-%{version}/bin
+        install -m 655 %{name}dummy-%{version}.so %{name}mysql-%{version}.so ${RPM_BUILD_ROOT}/srv/rgm/%{name}-%{version}/lib64
         install -m 655 lib%{name}-%{version}.* lib%{name}q-%{version}.* ${RPM_BUILD_ROOT}/usr/lib64
-        install -m 644 etc.in/bkd/*.sql ${RPM_BUILD_ROOT}/srv/eyesofnetwork/%{name}-%{version}/etc/bkd
-        install -m 644 gedq.8.gz ${RPM_BUILD_ROOT}/srv/eyesofnetwork/%{name}-%{version}/man/man8
-        install -m 744 ssl/mk* ssl/check* ${RPM_BUILD_ROOT}/srv/eyesofnetwork/%{name}-%{version}/etc/ssl
-        install -m 744 ssl/easy-rsa/* ${RPM_BUILD_ROOT}/srv/eyesofnetwork/%{name}-%{version}/etc/ssl/easy-rsa
-        install -m 755 scripts/* ${RPM_BUILD_ROOT}/srv/eyesofnetwork/%{name}-%{version}/scripts
+        install -m 644 etc.in/bkd/*.sql ${RPM_BUILD_ROOT}/srv/rgm/%{name}-%{version}/etc/bkd
+        install -m 644 gedq.8.gz ${RPM_BUILD_ROOT}/srv/rgm/%{name}-%{version}/man/man8
+        install -m 744 ssl/mk* ssl/check* ${RPM_BUILD_ROOT}/srv/rgm/%{name}-%{version}/etc/ssl
+        install -m 744 ssl/easy-rsa/* ${RPM_BUILD_ROOT}/srv/rgm/%{name}-%{version}/etc/ssl/easy-rsa
+        install -m 755 scripts/* ${RPM_BUILD_ROOT}/srv/rgm/%{name}-%{version}/scripts
 
         mkdir -p ${RPM_BUILD_ROOT}/usr/include/ged
         install -m 644 inc/* ${RPM_BUILD_ROOT}/usr/include/ged
         install -m 644 %{name}-%{version}.pc ${RPM_BUILD_ROOT}/usr/lib64/pkgconfig
-        install -m 644 var/www/index.html ${RPM_BUILD_ROOT}/srv/eyesofnetwork/%{name}-%{version}/var/www/
+        install -m 644 var/www/index.html ${RPM_BUILD_ROOT}/srv/rgm/%{name}-%{version}/var/www/
 
 	install -m 644 etc.in/gedd.service $RPM_BUILD_ROOT/%{_unitdir}/gedd.service
 
 %post
-	mkdir -p ${RPM_BUILD_ROOT}/srv/eyesofnetwork/%{name}-%{version}/var/cache
-        chmod 777 ${RPM_BUILD_ROOT}/srv/eyesofnetwork/%{name}-%{version}/var/cache
+	mkdir -p ${RPM_BUILD_ROOT}/srv/rgm/%{name}-%{version}/var/cache
+        chmod 777 ${RPM_BUILD_ROOT}/srv/rgm/%{name}-%{version}/var/cache
 
-        mkdir -p ${RPM_BUILD_ROOT}/srv/eyesofnetwork/%{name}-%{version}/var/lib
-        chmod 777 ${RPM_BUILD_ROOT}/srv/eyesofnetwork/%{name}-%{version}/var/lib
+        mkdir -p ${RPM_BUILD_ROOT}/srv/rgm/%{name}-%{version}/var/lib
+        chmod 777 ${RPM_BUILD_ROOT}/srv/rgm/%{name}-%{version}/var/lib
 
-        ln -s /srv/eyesofnetwork/%{name}-%{version} /srv/eyesofnetwork/%{name}
+        ln -s /srv/rgm/%{name}-%{version} /srv/rgm/%{name}
 
-        if [ ! -f /srv/eyesofnetwork/%{name}-%{version}/etc/ssl/ca.crt ]; then
-                cd /srv/eyesofnetwork/%{name}-%{version}/etc/ssl
+        if [ ! -f /srv/rgm/%{name}-%{version}/etc/ssl/ca.crt ]; then
+                cd /srv/rgm/%{name}-%{version}/etc/ssl
                 ./mkgedsrvcerts.sh geds
                 ./mkgedclicerts.sh gedc
                 cd -
@@ -142,44 +142,47 @@ This is the devel part as you may want to write your own backend.
 	rm -rf /tmp/%{name}-%{version}
 
 %files
-%config(noreplace) /srv/eyesofnetwork/%{name}-%{version}/etc/ged.cfg
-%config(noreplace) /srv/eyesofnetwork/%{name}-%{version}/etc/gedq.cfg
-%config(noreplace) /srv/eyesofnetwork/%{name}-%{version}/etc/gedp.cfg
-%config(noreplace) /srv/eyesofnetwork/%{name}-%{version}/etc/gedt.cfg
-%config(noreplace) /srv/eyesofnetwork/%{name}-%{version}/etc/event_rgm.cfg
-%config(noreplace) /srv/eyesofnetwork/%{name}-%{version}/etc/bkd/geddummy.cfg
+%config(noreplace) /srv/rgm/%{name}-%{version}/etc/ged.cfg
+%config(noreplace) /srv/rgm/%{name}-%{version}/etc/gedq.cfg
+%config(noreplace) /srv/rgm/%{name}-%{version}/etc/gedp.cfg
+%config(noreplace) /srv/rgm/%{name}-%{version}/etc/gedt.cfg
+%config(noreplace) /srv/rgm/%{name}-%{version}/etc/event_rgm.cfg
+%config(noreplace) /srv/rgm/%{name}-%{version}/etc/bkd/geddummy.cfg
 %{_unitdir}/gedd.service
-/srv/eyesofnetwork/%{name}-%{version}/etc/ssl
+/srv/rgm/%{name}-%{version}/etc/ssl
 /etc/cron.d/ged2rss
 /etc/cron.d/purge_ged
 /etc/httpd/conf.d/ged_rss.conf
-/srv/eyesofnetwork/%{name}-%{version}/lib64/geddummy-%{version}.so
-/srv/eyesofnetwork/%{name}-%{version}/bin/ged
-/srv/eyesofnetwork/%{name}-%{version}/bin/gedq
-/srv/eyesofnetwork/%{name}-%{version}/bin/gedbackup
-/srv/eyesofnetwork/%{name}-%{version}/bin/gedrestore
-/srv/eyesofnetwork/%{name}-%{version}/man/man8/gedq.8.gz
-/srv/eyesofnetwork/%{name}-%{version}/scripts/
-/srv/eyesofnetwork/%{name}-%{version}/var/www/index.html
+/srv/rgm/%{name}-%{version}/lib64/geddummy-%{version}.so
+/srv/rgm/%{name}-%{version}/bin/ged
+/srv/rgm/%{name}-%{version}/bin/gedq
+/srv/rgm/%{name}-%{version}/bin/gedbackup
+/srv/rgm/%{name}-%{version}/bin/gedrestore
+/srv/rgm/%{name}-%{version}/man/man8/gedq.8.gz
+/srv/rgm/%{name}-%{version}/scripts/
+/srv/rgm/%{name}-%{version}/var/www/index.html
 /usr/lib64/libged-%{version}.so
 /usr/lib64/libged-%{version}.a
 /usr/lib64/libgedq-%{version}.so
 /usr/lib64/libgedq-%{version}.a
 
 #%files bdb
-#%config(noreplace) /srv/eyesofnetwork/%{name}-%{version}/etc/bkd/gedhdb.cfg
-#/srv/eyesofnetwork/%{name}-%{version}/lib64/gedhdb-%{version}.so
+#%config(noreplace) /srv/rgm/%{name}-%{version}/etc/bkd/gedhdb.cfg
+#/srv/rgm/%{name}-%{version}/lib64/gedhdb-%{version}.so
 
 %files mysql
-%config(noreplace) /srv/eyesofnetwork/%{name}-%{version}/etc/bkd/gedmysql.cfg
-/srv/eyesofnetwork/%{name}-%{version}/lib64/gedmysql-%{version}.so
-/srv/eyesofnetwork/%{name}-%{version}/etc/bkd/ged-init.sql
+%config(noreplace) /srv/rgm/%{name}-%{version}/etc/bkd/gedmysql.cfg
+/srv/rgm/%{name}-%{version}/lib64/gedmysql-%{version}.so
+/srv/rgm/%{name}-%{version}/etc/bkd/ged-init.sql
 
 %files devel
 /usr/include/ged
 /usr/lib64/pkgconfig/%{name}-%{version}.pc
 
 %changelog
+* Tue Mar 12 2019 Michael Aubertin <maubertin@fr.scc.com> - 1.6-1.rgm
+- Change path
+
 * Wed Feb 20 2019 Michael Aubertin <maubertin@fr.scc.com> - 1.6.0
 - Prepare RGM customization
 

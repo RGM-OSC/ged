@@ -234,7 +234,7 @@ const static size_t			GED_HRCD_FIX_SIZE		= sizeof(TGEDHRcd) - sizeof(TGEDRcdSrc*
 
 // GED / GEDQ known core parameters
 #ifdef __GED__
-const static CString			GEDCfgFileDefault		("/srv/eyesofnetwork/ged/etc/ged.cfg");
+const static CString			GEDCfgFileDefault		("/srv/rgm/ged/etc/ged.cfg");
 const static CString			GEDCfgSysLogLocal		("syslog_local");
 const static CString			GEDCfgSysLogHistoryLocal	("syslog_history_local");
 const static CString			GEDCfgSysLogLevel		("syslog_level");
@@ -292,7 +292,7 @@ const static CString			GEDCfgPacketFieldFloat64	("FLOAT64");
 const static CString			GEDCfgPacketFieldMeta		("META");
 const static CString			GEDCfgPacketEnd			("</packet");
 #ifdef __GEDQ__
-const static CString			GEDQCfgFileDefault		("/srv/eyesofnetwork/ged/etc/gedq.cfg");
+const static CString			GEDQCfgFileDefault		("/srv/rgm/ged/etc/gedq.cfg");
 const static CString			GEDQCfgPeekMaxRecords		("peek_max_records");
 #endif
 
