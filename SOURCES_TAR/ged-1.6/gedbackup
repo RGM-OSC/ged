@@ -4,8 +4,8 @@
 # A BACKUP OPERATION SHOULD NOT BE INTERRUPTED !
 #
 # editable section
-ged_cmd=/srv/eyesofnetwork/ged/bin/ged
-ged_cfg=/srv/eyesofnetwork/ged/etc/ged.cfg
+ged_cmd=/srv/rgm/ged/bin/ged
+ged_cfg=/srv/rgm/ged/etc/ged.cfg
 #
 ###############################################################################################################
 

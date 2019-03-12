@@ -18,9 +18,9 @@ if [ $? != 0 ]; then
 fi
 
 cd ${filename} > /dev/null
-	/srv/eyesofnetwork/ged/bin/ged -recover *active*.xml
-	/srv/eyesofnetwork/ged/bin/ged -recover *history*.xml
-	/srv/eyesofnetwork/ged/bin/ged -recover *sync*.xml
+	/srv/rgm/ged/bin/ged -recover *active*.xml
+	/srv/rgm/ged/bin/ged -recover *history*.xml
+	/srv/rgm/ged/bin/ged -recover *sync*.xml
 cd - > /dev/null
 
 rm -rf ${filename}
