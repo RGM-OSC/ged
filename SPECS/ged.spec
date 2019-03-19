@@ -188,6 +188,7 @@ This is the devel part as you may want to write your own backend.
 %changelog
 * Thu Mar 19 2019 Eric Belhomme <ebelhomme@fr.scc.com> - 1.6-3.rgm
 - fix mariadb dependency to mariadb-libs
+- fix apache config file
 
 * Fri Mar 15 2019 Eric Belhomme <ebelhomme@fr.scc.com> - 1.6-2.rgm
 - add rgm-macros-rpm as build dependency
