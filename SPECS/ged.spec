@@ -1,7 +1,7 @@
 Summary: Generic Event Dispatcher
 Name:ged
 Version:1.6
-Release:2.rgm
+Release:3.rgm
 Source:%{name}-%{version}.tar.gz
 BuildRoot:/tmp/%{name}-%{version}
 Group:Applications/Base
@@ -34,7 +34,7 @@ License: GPL
 Group: Applications/Base
 
 Requires: %{name} = %{version}
-Requires: mariadb-server
+Requires: mariadb-libs
 
 %description mysql
 GED is a wire designed to handle templated data transmission over HTTP in distributed networks. 
@@ -186,6 +186,9 @@ This is the devel part as you may want to write your own backend.
 %{_libdir}/pkgconfig/%{name}-%{version}.pc
 
 %changelog
+* Thu Mar 19 2019 Eric Belhomme <ebelhomme@fr.scc.com> - 1.6-3.rgm
+- fix mariadb dependency to mariadb-libs
+
 * Fri Mar 15 2019 Eric Belhomme <ebelhomme@fr.scc.com> - 1.6-2.rgm
 - add rgm-macros-rpm as build dependency
 - add rgm-base as dependency
