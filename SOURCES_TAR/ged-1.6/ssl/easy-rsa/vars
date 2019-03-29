@@ -59,6 +59,6 @@ export KEY_EXPIRE=365
 # Don't leave any of these fields blank.
 export KEY_COUNTRY="FR"
 export KEY_PROVINCE="IDF"
-export KEY_CITY="Paris"
-export KEY_ORG="EON"
-export KEY_EMAIL="support@eon.org"
+export KEY_CITY="Nanterre"
+export KEY_ORG="RGM"
+export KEY_EMAIL="support@rgm-cloud.io"
