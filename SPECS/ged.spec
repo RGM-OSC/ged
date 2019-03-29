@@ -182,7 +182,6 @@ This is the devel part as you may want to write your own backend.
 %files mysql
 %config(noreplace) %{rgm_path}/%{name}-%{version}/etc/bkd/gedmysql.cfg
 %{rgm_path}/%{name}-%{version}/lib64/gedmysql-%{version}.so
-%{rgm_path}/%{name}-%{version}/lib64/gedmysql.so.1
 
 %{rgm_path}/%{name}-%{version}/etc/bkd/ged-init.sql
 
