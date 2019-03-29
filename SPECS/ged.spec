@@ -128,6 +128,7 @@ This is the devel part as you may want to write your own backend.
         chmod 777 ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/var/lib
 
         ln -s %{rgm_path}/%{name}-%{version} %{rgm_path}/%{name}
+        ln -s %{rgm_path}/%{name}-%{version}/lib64/gedmysql-%{version}.so %{rgm_path}/%{name}-%{version}/lib64/gedmysql.so.1
 
         if [ ! -f %{rgm_path}/%{name}-%{version}/etc/ssl/ca.crt ]; then
                 cd %{rgm_path}/%{name}-%{version}/etc/ssl
@@ -139,6 +140,8 @@ This is the devel part as you may want to write your own backend.
 
 %preun
 	%systemd_preun gedd.service
+        rm -f %{rgm_path}/%{name}
+        rm -f %{rgm_path}/%{name}-%{version}/lib64/gedmysql.so.1
 
 %postun
 	%systemd_postun_with_restart gedd.service
@@ -179,6 +182,8 @@ This is the devel part as you may want to write your own backend.
 %files mysql
 %config(noreplace) %{rgm_path}/%{name}-%{version}/etc/bkd/gedmysql.cfg
 %{rgm_path}/%{name}-%{version}/lib64/gedmysql-%{version}.so
+%{rgm_path}/%{name}-%{version}/lib64/gedmysql.so.1
+
 %{rgm_path}/%{name}-%{version}/etc/bkd/ged-init.sql
 
 %files devel
