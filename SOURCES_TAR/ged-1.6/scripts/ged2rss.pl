@@ -52,7 +52,7 @@ $ENV{'ENV'}='';
 $Revision="0.2";
 
 my $DB_USER = "gedadmin";
-my $DB_PASS = "whaza";
+my $DB_PASS = "0rd0-c0m1735-b47h0n143";
 
 my $rgm_Host = `/bin/hostname | /usr/bin/tr '\n' ' ' | /bin/sed -e 's: ::g'`;
 my $RSS_Filter_Name = "";
