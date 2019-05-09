@@ -117,9 +117,6 @@ This is the devel part as you may want to write your own backend.
 	install -m 644 etc.in/gedd.service $RPM_BUILD_ROOT/%{_unitdir}/gedd.service
 
 %post
-        # execute SQL postinstall script
-        /usr/share/rgm/manage_sql.sh -d %{rgm_db_ged} -s %{rgm_path}/%{name}-%{version}/etc/bkd/ged-init.sql -u %{rgm_sql_internal_user} -p %{rgm_sql_internal_pwd}
-
 	mkdir -p ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/var/cache
         chmod 777 ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/var/cache
 
@@ -127,7 +124,6 @@ This is the devel part as you may want to write your own backend.
         chmod 777 ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/var/lib
 
         ln -s %{rgm_path}/%{name}-%{version} %{rgm_path}/%{name}
-        ln -s %{rgm_path}/%{name}-%{version}/lib64/gedmysql-%{version}.so %{rgm_path}/%{name}-%{version}/lib64/gedmysql.so.1
 
         if [ ! -f %{rgm_path}/%{name}-%{version}/etc/ssl/ca.crt ]; then
                 cd %{rgm_path}/%{name}-%{version}/etc/ssl
@@ -137,9 +133,16 @@ This is the devel part as you may want to write your own backend.
         fi
 	%systemd_post gedd.service
 
+%post mysql
+        # execute SQL postinstall script
+        /usr/share/rgm/manage_sql.sh -d %{rgm_db_ged} -s %{rgm_path}/%{name}-%{version}/etc/bkd/ged-init.sql -u %{rgm_sql_internal_user} -p %{rgm_sql_internal_pwd}
+        ln -s %{rgm_path}/%{name}-%{version}/lib64/gedmysql-%{version}.so %{rgm_path}/%{name}-%{version}/lib64/gedmysql.so.1
+
 %preun
 	%systemd_preun gedd.service
         rm -f %{rgm_path}/%{name}
+
+%preun mysql
         rm -f %{rgm_path}/%{name}-%{version}/lib64/gedmysql.so.1
 
 %postun
@@ -181,7 +184,6 @@ This is the devel part as you may want to write your own backend.
 %files mysql
 %config(noreplace) %{rgm_path}/%{name}-%{version}/etc/bkd/gedmysql.cfg
 %{rgm_path}/%{name}-%{version}/lib64/gedmysql-%{version}.so
-
 %{rgm_path}/%{name}-%{version}/etc/bkd/ged-init.sql
 
 %files devel
@@ -191,6 +193,7 @@ This is the devel part as you may want to write your own backend.
 %changelog
 * Thu May 09 2019 Eric Belhomme <ebelhomme@fr.scc.com> - 1.6-4.rgm
 - call SQL schema init script to fix SQL privileges for 'gedadmin' user
+- fix SPEC for mysql package creation
 
 * Fri Mar 29 2019 Eric Belhomme <ebelhomme@fr.scc.com> - 1.6-3.rgm
 - fix mariadb dependency to mariadb-libs
