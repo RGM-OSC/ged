@@ -1,7 +1,7 @@
 Summary: Generic Event Dispatcher
 Name:ged
 Version:1.6
-Release:3.rgm
+Release:4.rgm
 Source:%{name}-%{version}.tar.gz
 BuildRoot:/tmp/%{name}-%{version}
 Group:Applications/Base
@@ -117,9 +117,8 @@ This is the devel part as you may want to write your own backend.
 	install -m 644 etc.in/gedd.service $RPM_BUILD_ROOT/%{_unitdir}/gedd.service
 
 %post
-
         # execute SQL postinstall script
-        /usr/share/rgm/manage_sql.sh -d %{rgm_db_ged} -u %{rgm_sql_internal_user} -p %{rgm_sql_internal_pwd}
+        /usr/share/rgm/manage_sql.sh -d %{rgm_db_ged} -s %{rgm_path}/%{name}-%{version}/etc/bkd/ged-init.sql -u %{rgm_sql_internal_user} -p %{rgm_sql_internal_pwd}
 
 	mkdir -p ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/var/cache
         chmod 777 ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/var/cache
@@ -190,6 +189,9 @@ This is the devel part as you may want to write your own backend.
 %{_libdir}/pkgconfig/%{name}-%{version}.pc
 
 %changelog
+* Thu May 09 2019 Eric Belhomme <ebelhomme@fr.scc.com> - 1.6-4.rgm
+- call SQL schema init script to fix SQL privileges for 'gedadmin' user
+
 * Fri Mar 29 2019 Eric Belhomme <ebelhomme@fr.scc.com> - 1.6-3.rgm
 - fix mariadb dependency to mariadb-libs
 - fix apache config file
