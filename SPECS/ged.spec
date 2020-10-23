@@ -1,7 +1,7 @@
 Summary: Generic Event Dispatcher
 Name:ged
 Version:1.6
-Release:4.rgm
+Release:5.rgm
 Source:%{name}-%{version}.tar.gz
 BuildRoot:/tmp/%{name}-%{version}
 Group:Applications/Base
@@ -191,6 +191,9 @@ This is the devel part as you may want to write your own backend.
 %{_libdir}/pkgconfig/%{name}-%{version}.pc
 
 %changelog
+* Fri Oct 23 2020 Eric Belhomme <ebelhomme@fr.scc.com> - 1.6-5.rgm
+- fix buggy cronjob for ged purge
+
 * Thu May 09 2019 Eric Belhomme <ebelhomme@fr.scc.com> - 1.6-4.rgm
 - call SQL schema init script to fix SQL privileges for 'gedadmin' user
 - fix SPEC for mysql package creation
