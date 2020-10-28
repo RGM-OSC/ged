@@ -1,7 +1,7 @@
 Summary: Generic Event Dispatcher
 Name:ged
 Version:1.6
-Release:5.rgm
+Release:6.rgm
 Source:%{name}-%{version}.tar.gz
 BuildRoot:/tmp/%{name}-%{version}
 Group:Applications/Base
@@ -123,6 +123,9 @@ This is the devel part as you may want to write your own backend.
         mkdir -p ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/var/lib
         chmod 777 ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/var/lib
 
+        if [ -e %{rgm_path}/%{name} ] && [ -L %{rgm_path}/%{name} ] ; then
+                rm -f %{rgm_path}/%{name}
+        fi
         ln -s %{rgm_path}/%{name}-%{version} %{rgm_path}/%{name}
 
         if [ ! -f %{rgm_path}/%{name}-%{version}/etc/ssl/ca.crt ]; then
@@ -136,14 +139,25 @@ This is the devel part as you may want to write your own backend.
 %post mysql
         # execute SQL postinstall script
         /usr/share/rgm/manage_sql.sh -d %{rgm_db_ged} -s %{rgm_path}/%{name}-%{version}/etc/bkd/ged-init.sql -u %{rgm_sql_internal_user} -p %{rgm_sql_internal_pwd}
+        if [ -e %{rgm_path}/%{name}-%{version}/lib64/gedmysql.so.1 ] && [ -L %{rgm_path}/%{name}-%{version}/lib64/gedmysql.so.1 ] ; then
+                rm -f %{rgm_path}/%{name}-%{version}/lib64/gedmysql.so.1
+        fi
         ln -s %{rgm_path}/%{name}-%{version}/lib64/gedmysql-%{version}.so %{rgm_path}/%{name}-%{version}/lib64/gedmysql.so.1
 
 %preun
 	%systemd_preun gedd.service
-        rm -f %{rgm_path}/%{name}
+        if [ "$1" = 0 ]; then
+                if [ -e %{rgm_path}/%{name} ]; then
+                        rm -f %{rgm_path}/%{name}
+                fi
+        fi
 
 %preun mysql
-        rm -f %{rgm_path}/%{name}-%{version}/lib64/gedmysql.so.1
+        if [ "$1" = 0 ]; then
+                if [ -e %{rgm_path}/%{name} ]; then
+                        rm -f %{rgm_path}/%{name}-%{version}/lib64/gedmysql.so.1
+                fi
+        fi
 
 %postun
 	%systemd_postun_with_restart gedd.service
@@ -191,6 +205,9 @@ This is the devel part as you may want to write your own backend.
 %{_libdir}/pkgconfig/%{name}-%{version}.pc
 
 %changelog
+* Wed Oct 28 2020 Eric Belhomme <ebelhomme@fr.scc.com> - 1.6-6.rgm
+- fix bad symlink handling in SPEC file
+
 * Fri Oct 23 2020 Eric Belhomme <ebelhomme@fr.scc.com> - 1.6-5.rgm
 - fix buggy cronjob for ged purge
 
