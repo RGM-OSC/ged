@@ -1,7 +1,7 @@
 Summary: Generic Event Dispatcher
 Name: ged
 Version: 1.6
-Release: 6.rgm
+Release: 7.rgm
 Source: %{name}.tar.gz
 BuildRoot: /tmp/%{name}-%{version}
 Group: Applications/Base
@@ -93,7 +93,6 @@ This is the devel part as you may want to write your own backend.
 
     install -m 640 etc.in/ged2rss ${RPM_BUILD_ROOT}%{_sysconfdir}/cron.d/
     install -m 640 etc.in/purge_ged ${RPM_BUILD_ROOT}%{_sysconfdir}/cron.d/
-    install -m 640 etc.in/ged_rss.conf ${RPM_BUILD_ROOT}%{_sysconfdir}/httpd/conf.d/
     install -m 666 etc.in/*.cfg ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/etc
     install -m 666 etc.in/bkd/gedmysql.cfg ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/etc/bkd
     install -m 666 etc.in/bkd/geddummy.cfg ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/etc/bkd
@@ -104,6 +103,7 @@ This is the devel part as you may want to write your own backend.
     install -m 655 %{name}dummy-%{version}.so %{name}mysql-%{version}.so ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/lib64
     install -m 655 lib%{name}-%{version}.* lib%{name}q-%{version}.* ${RPM_BUILD_ROOT}%{_libdir}
     install -m 644 etc.in/bkd/*.sql ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/etc/bkd
+    install -m 640 -t ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/etc/ etc.in/httpd-ged_rss.example.conf
     install -m 644 gedq.8.gz ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/man/man8
     install -m 744 ssl/mk* ssl/check* ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/etc/ssl
     install -m 744 ssl/easy-rsa/* ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/etc/ssl/easy-rsa
@@ -175,7 +175,7 @@ This is the devel part as you may want to write your own backend.
 %{rgm_path}/%{name}-%{version}/etc/ssl
 %{_sysconfdir}/cron.d/ged2rss
 %{_sysconfdir}/cron.d/purge_ged
-%{_sysconfdir}/httpd/conf.d/ged_rss.conf
+%{rgm_path}/%{name}-%{version}/etc/httpd-ged_rss.example.conf
 %{rgm_path}/%{name}-%{version}/lib64/geddummy-%{version}.so
 %{rgm_path}/%{name}-%{version}/bin/ged
 %{rgm_path}/%{name}-%{version}/bin/gedq
@@ -203,6 +203,9 @@ This is the devel part as you may want to write your own backend.
 %{_libdir}/pkgconfig/%{name}-%{version}.pc
 
 %changelog
+* Wed Mar 17 2021 Eric Belhomme <ebelhomme@fr.scc.com> - 1.6-7.rgm
+- remove httpd config file
+
 * Wed Oct 28 2020 Eric Belhomme <ebelhomme@fr.scc.com> - 1.6-6.rgm
 - fix bad symlink handling in SPEC file
 
