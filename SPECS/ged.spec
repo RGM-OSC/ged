@@ -1,12 +1,12 @@
 Summary: Generic Event Dispatcher
-Name:ged
-Version:1.6
-Release:6.rgm
-Source:%{name}-%{version}.tar.gz
-BuildRoot:/tmp/%{name}-%{version}
-Group:Applications/Base
+Name: ged
+Version: 1.6
+Release: 6.rgm
+Source: %{name}.tar.gz
+BuildRoot: /tmp/%{name}-%{version}
+Group: Applications/Base
 Packager: http://generic-ed.sourceforge.net
-License:GPL
+License: GPL
 
 BuildRequires: gcc >= 4.0.0
 BuildRequires: pkgconfig
@@ -72,99 +72,97 @@ GED is a wire designed to handle templated data transmission over HTTP in distri
 This is the devel part as you may want to write your own backend.
 
 %prep
-%setup -q
+%setup -q -n %{name}
 
 %build
-	make 
+    make 
 
 %install
-	rm -rf ${RPM_BUILD_ROOT}
-	mkdir -p ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/bin
-        mkdir -p ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/etc/ssl/easy-rsa
-        mkdir -p ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/etc/bkd
-        mkdir -p ${RPM_BUILD_ROOT}%{_sysconfdir}/cron.d
-        mkdir -p ${RPM_BUILD_ROOT}%{_sysconfdir}/httpd/conf.d
-        mkdir -p ${RPM_BUILD_ROOT}%{_libdir}/pkgconfig
-        mkdir -p ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/lib64
-        mkdir -p ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/man/man8
-        mkdir -p ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/scripts
-        mkdir -p ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/var/www/
-	mkdir -p ${RPM_BUILD_ROOT}%{_unitdir}
+    rm -rf ${RPM_BUILD_ROOT}
+    mkdir -p ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/bin
+    mkdir -p ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/etc/ssl/easy-rsa
+    mkdir -p ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/etc/bkd
+    mkdir -p ${RPM_BUILD_ROOT}%{_sysconfdir}/cron.d
+    mkdir -p ${RPM_BUILD_ROOT}%{_sysconfdir}/httpd/conf.d
+    mkdir -p ${RPM_BUILD_ROOT}%{_libdir}/pkgconfig
+    mkdir -p ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/lib64
+    mkdir -p ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/man/man8
+    mkdir -p ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/scripts
+    mkdir -p ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/var/www/
+    mkdir -p ${RPM_BUILD_ROOT}%{_unitdir}
 
-        install -m 640 etc.in/ged2rss ${RPM_BUILD_ROOT}%{_sysconfdir}/cron.d/
-        install -m 640 etc.in/purge_ged ${RPM_BUILD_ROOT}%{_sysconfdir}/cron.d/
-        install -m 640 etc.in/ged_rss.conf ${RPM_BUILD_ROOT}%{_sysconfdir}/httpd/conf.d/
-        install -m 666 etc.in/*.cfg ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/etc
-        install -m 666 etc.in/bkd/gedmysql.cfg ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/etc/bkd
-        install -m 666 etc.in/bkd/geddummy.cfg ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/etc/bkd
-        install -m 755 ged ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/bin
-        install -m 755 gedq ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/bin
-        install -m 755 gedbackup ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/bin
-        install -m 755 gedrestore ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/bin
-        install -m 655 %{name}dummy-%{version}.so %{name}mysql-%{version}.so ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/lib64
-        install -m 655 lib%{name}-%{version}.* lib%{name}q-%{version}.* ${RPM_BUILD_ROOT}%{_libdir}
-        install -m 644 etc.in/bkd/*.sql ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/etc/bkd
-        install -m 644 gedq.8.gz ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/man/man8
-        install -m 744 ssl/mk* ssl/check* ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/etc/ssl
-        install -m 744 ssl/easy-rsa/* ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/etc/ssl/easy-rsa
-        install -m 755 scripts/* ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/scripts
+    install -m 640 etc.in/ged2rss ${RPM_BUILD_ROOT}%{_sysconfdir}/cron.d/
+    install -m 640 etc.in/purge_ged ${RPM_BUILD_ROOT}%{_sysconfdir}/cron.d/
+    install -m 640 etc.in/ged_rss.conf ${RPM_BUILD_ROOT}%{_sysconfdir}/httpd/conf.d/
+    install -m 666 etc.in/*.cfg ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/etc
+    install -m 666 etc.in/bkd/gedmysql.cfg ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/etc/bkd
+    install -m 666 etc.in/bkd/geddummy.cfg ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/etc/bkd
+    install -m 755 ged ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/bin
+    install -m 755 gedq ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/bin
+    install -m 755 gedbackup ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/bin
+    install -m 755 gedrestore ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/bin
+    install -m 655 %{name}dummy-%{version}.so %{name}mysql-%{version}.so ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/lib64
+    install -m 655 lib%{name}-%{version}.* lib%{name}q-%{version}.* ${RPM_BUILD_ROOT}%{_libdir}
+    install -m 644 etc.in/bkd/*.sql ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/etc/bkd
+    install -m 644 gedq.8.gz ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/man/man8
+    install -m 744 ssl/mk* ssl/check* ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/etc/ssl
+    install -m 744 ssl/easy-rsa/* ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/etc/ssl/easy-rsa
+    install -m 755 scripts/* ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/scripts
 
-        mkdir -p ${RPM_BUILD_ROOT}/usr/include/ged
-        install -m 644 inc/* ${RPM_BUILD_ROOT}/usr/include/ged
-        install -m 644 %{name}-%{version}.pc ${RPM_BUILD_ROOT}%{_libdir}/pkgconfig
-        install -m 644 var/www/index.html ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/var/www/
+    mkdir -p ${RPM_BUILD_ROOT}/usr/include/ged
+    install -m 644 inc/* ${RPM_BUILD_ROOT}/usr/include/ged
+    install -m 644 %{name}-%{version}.pc ${RPM_BUILD_ROOT}%{_libdir}/pkgconfig
+    install -m 644 var/www/index.html ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/var/www/
 
-	install -m 644 etc.in/gedd.service $RPM_BUILD_ROOT/%{_unitdir}/gedd.service
+    install -m 644 etc.in/gedd.service $RPM_BUILD_ROOT/%{_unitdir}/gedd.service
 
 %post
-	mkdir -p ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/var/cache
-        chmod 777 ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/var/cache
+    mkdir -p ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/var/cache
+    chmod 777 ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/var/cache
 
-        mkdir -p ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/var/lib
-        chmod 777 ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/var/lib
+    mkdir -p ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/var/lib
+    chmod 777 ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/var/lib
 
-        if [ -e %{rgm_path}/%{name} ] && [ -L %{rgm_path}/%{name} ] ; then
-                rm -f %{rgm_path}/%{name}
-        fi
-        ln -s %{rgm_path}/%{name}-%{version} %{rgm_path}/%{name}
+    ln -sf %{rgm_path}/%{name}-%{version} %{rgm_path}/%{name}
 
-        if [ ! -f %{rgm_path}/%{name}-%{version}/etc/ssl/ca.crt ]; then
-                cd %{rgm_path}/%{name}-%{version}/etc/ssl
-                ./mkgedsrvcerts.sh geds
-                ./mkgedclicerts.sh gedc
-                cd -
-        fi
-	%systemd_post gedd.service
+    if [ ! -f %{rgm_path}/%{name}-%{version}/etc/ssl/ca.crt ]; then
+        cd %{rgm_path}/%{name}-%{version}/etc/ssl
+        ./mkgedsrvcerts.sh geds
+        ./mkgedclicerts.sh gedc
+        cd -
+    fi
+    %systemd_post gedd.service
 
 %post mysql
-        # execute SQL postinstall script
-        /usr/share/rgm/manage_sql.sh -d %{rgm_db_ged} -s %{rgm_path}/%{name}-%{version}/etc/bkd/ged-init.sql -u %{rgm_sql_internal_user} -p %{rgm_sql_internal_pwd}
-        if [ -e %{rgm_path}/%{name}-%{version}/lib64/gedmysql.so.1 ] && [ -L %{rgm_path}/%{name}-%{version}/lib64/gedmysql.so.1 ] ; then
-                rm -f %{rgm_path}/%{name}-%{version}/lib64/gedmysql.so.1
-        fi
-        ln -s %{rgm_path}/%{name}-%{version}/lib64/gedmysql-%{version}.so %{rgm_path}/%{name}-%{version}/lib64/gedmysql.so.1
+    # execute SQL postinstall script
+    /usr/share/rgm/manage_sql.sh -d %{rgm_db_ged} -s %{rgm_path}/%{name}-%{version}/etc/bkd/ged-init.sql -u %{rgm_sql_internal_user} -p %{rgm_sql_internal_pwd}
+    if [ -e %{rgm_path}/%{name}-%{version}/lib64/gedmysql.so.1 ] && [ -L %{rgm_path}/%{name}-%{version}/lib64/gedmysql.so.1 ] ; then
+        rm -f %{rgm_path}/%{name}-%{version}/lib64/gedmysql.so.1
+    fi
+    ln -s %{rgm_path}/%{name}-%{version}/lib64/gedmysql-%{version}.so %{rgm_path}/%{name}-%{version}/lib64/gedmysql.so.1
 
 %preun
-	%systemd_preun gedd.service
-        if [ "$1" = 0 ]; then
-                if [ -e %{rgm_path}/%{name} ]; then
-                        rm -f %{rgm_path}/%{name}
-                fi
+    %systemd_preun gedd.service
+    if [ "$1" = 0 ]; then
+        if [ -e %{rgm_path}/%{name} ]; then
+            rm -f %{rgm_path}/%{name}
         fi
+    fi
 
 %preun mysql
-        if [ "$1" = 0 ]; then
-                if [ -e %{rgm_path}/%{name} ]; then
-                        rm -f %{rgm_path}/%{name}-%{version}/lib64/gedmysql.so.1
-                fi
+    if [ "$1" = 0 ]; then
+        if [ -e %{rgm_path}/%{name} ]; then
+            rm -f %{rgm_path}/%{name}-%{version}/lib64/gedmysql.so.1
         fi
+    fi
 
 %postun
-	%systemd_postun_with_restart gedd.service
+    %systemd_postun_with_restart gedd.service
 
 %clean
-	rm -rf ${RPM_BUILD_ROOT}
-	rm -rf /tmp/%{name}-%{version}
+    rm -rf ${RPM_BUILD_ROOT}
+    rm -rf /tmp/%{name}-%{version}
+
 
 %files
 %config(noreplace) %{rgm_path}/%{name}-%{version}/etc/ged.cfg
