@@ -1,7 +1,7 @@
 Summary: Generic Event Dispatcher
 Name: ged
 Version: 1.6
-Release: 7.rgm
+Release: 8.rgm
 Source: %{name}.tar.gz
 BuildRoot: /tmp/%{name}-%{version}
 Group: Applications/Base
@@ -131,6 +131,8 @@ This is the devel part as you may want to write your own backend.
         ./mkgedclicerts.sh gedc
         cd -
     fi
+    # Force gedt deactivation
+    sed -i 's/^include \/srv\/rgm\/ged\/etc\/gedt\.cfg/# include \/srv\/rgm\/ged\/etc\/gedt\.cfg/g' ${RPM_BUILD_ROOT}%{rgm_path}/%{name}-%{version}/etc/ged.cfg
     %systemd_post gedd.service
 
 %post mysql
@@ -203,6 +205,9 @@ This is the devel part as you may want to write your own backend.
 %{_libdir}/pkgconfig/%{name}-%{version}.pc
 
 %changelog
+* Fri Sep 10 2021 Alex Rocher <arocher@fr.scc.com> - 1.6-8.rgm
+- Deactivate gedt include
+
 * Wed Mar 17 2021 Eric Belhomme <ebelhomme@fr.scc.com> - 1.6-7.rgm
 - remove httpd config file
 
