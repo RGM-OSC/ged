@@ -1049,6 +1049,20 @@ bool LoadGEDCfg (const CString &inFile, TGEDCfg &outGEDCfg, int inDepth)
 					outGEDPktFieldCfg.meta = ((inArgs.GetLength()>2) && (inArgs[2]->ToUpper() == GEDCfgPacketFieldMeta)) ? 1 : 0;
 					outGEDPktCfg.fields += outGEDPktFieldCfg;
 				}
+				else if (*inArgs[0] == GEDCfgPacketFieldLargeString)
+				{
+					if (inArgs.GetLength() < 2)
+					{
+						::fprintf (stderr, 
+						"ERROR line %d : wrong packet specification syntax in file \"%s\"\n", Line, inFile.Get());
+						::fclose (f);
+						return false;
+					}
+					outGEDPktFieldCfg.type = DATA_LSTRING;
+					outGEDPktFieldCfg.name = *inArgs[1] - "\"";
+					outGEDPktFieldCfg.meta = ((inArgs.GetLength()>2) && (inArgs[2]->ToUpper() == GEDCfgPacketFieldMeta)) ? 1 : 0;
+					outGEDPktCfg.fields += outGEDPktFieldCfg;
+				}
 				else if (*inArgs[0] == GEDCfgPacketFieldSInt32)
 				{
 					if (inArgs.GetLength() < 2)
@@ -1636,6 +1650,20 @@ bool LoadGEDQCfg (const CString &inFile, TGEDQCfg &outGEDQCfg, int inDepth)
 						return false;
 					}
 					outGEDPktFieldCfg.type = DATA_STRING;
+					outGEDPktFieldCfg.name = *inArgs[1] - "\"";
+					outGEDPktFieldCfg.meta = ((inArgs.GetLength()>2) && (inArgs[2]->ToUpper() == GEDCfgPacketFieldMeta)) ? 1 : 0;
+					outGEDPktCfg.fields += outGEDPktFieldCfg;
+				}
+				else if (*inArgs[0] == GEDCfgPacketFieldLargeString)
+				{
+					if (inArgs.GetLength() < 2)
+					{
+						::fprintf (stderr, 
+						"ERROR line %d : wrong packet specification syntax in file \"%s\"\n", Line, inFile.Get());
+						::fclose (f);
+						return false;
+					}
+					outGEDPktFieldCfg.type = DATA_LSTRING;
 					outGEDPktFieldCfg.name = *inArgs[1] - "\"";
 					outGEDPktFieldCfg.meta = ((inArgs.GetLength()>2) && (inArgs[2]->ToUpper() == GEDCfgPacketFieldMeta)) ? 1 : 0;
 					outGEDPktCfg.fields += outGEDPktFieldCfg;
@@ -2330,6 +2358,14 @@ CString GEDPktInToContentString (TGEDPktIn *inGEDPktIn, TGEDPktCfg *inGEDPktCfg)
 					if (inSint8 != NULL) delete [] inSint8;
 				}
 				break;
+				case DATA_LSTRING :
+				{
+					SInt8 *inSint8=NULL;
+					inChunk >> inSint8;
+					outStr += inSint8;
+					if (inSint8 != NULL) delete [] inSint8;
+				}
+				break;
 				case DATA_FLOAT64 :
 				{
 					Float64 inFloat64=0.;
@@ -2605,6 +2641,17 @@ bool GEDRcdToXmlNode (TGEDRcd *inGEDRcd, const TBuffer <TGEDPktCfg> &inGEDPktCfg
 					if (inSint8 != NULL) delete [] inSint8;
 				}
 				break;
+				case DATA_LSTRING :
+				{
+					SInt8 *inSint8=NULL; 
+					*inChunk >> inSint8;
+					if (CString(inSint8).GetLength() > 0) 
+						xmlNodePtrChild = ::xmlNewChild (xmlNodePtrContent, NULL, (xmlChar*)inGEDPktCfg->fields[i]->name.Get(), (xmlChar*)inSint8);
+					else
+						xmlNodePtrChild = ::xmlNewChild (xmlNodePtrContent, NULL, (xmlChar*)inGEDPktCfg->fields[i]->name.Get(), NULL);
+					if (inSint8 != NULL) delete [] inSint8;
+				}
+				break;
 				case DATA_FLOAT64 :
 				{
 					Float64 inFloat64=0.;
@@ -2854,6 +2901,17 @@ bool GEDRcdToXmlNodeLight (TGEDRcd *inGEDRcd, const TBuffer <TGEDPktCfg> &inGEDP
 				}
 				break;
 				case DATA_STRING :
+				{
+					SInt8 *inSint8=NULL; 
+					*inChunk >> inSint8;
+					if (CString(inSint8).GetLength() > 0) 
+						xmlNodePtrChild = ::xmlNewChild (xmlNodePtrContent, NULL, (xmlChar*)inGEDPktCfg->fields[i]->name.Get(), (xmlChar*)inSint8);
+					else
+						xmlNodePtrChild = ::xmlNewChild (xmlNodePtrContent, NULL, (xmlChar*)inGEDPktCfg->fields[i]->name.Get(), NULL);
+					if (inSint8 != NULL) delete [] inSint8;
+				}
+				break;
+				case DATA_LSTRING :
 				{
 					SInt8 *inSint8=NULL; 
 					*inChunk >> inSint8;
@@ -3141,6 +3199,17 @@ bool GEDRcdToXmlNode (TGEDRcd *inGEDRcd, const TBuffer <TGEDPktCfg> &inGEDPktCfg
 					if (inSint8 != NULL) delete [] inSint8;
 				}
 				break;
+				case DATA_LSTRING :
+				{
+					SInt8 *inSint8=NULL; 
+					*inChunk >> inSint8;
+					if (CString(inSint8).GetLength() > 0) 
+						xmlNodePtrChild = ::xmlNewChild (xmlNodePtrContent, NULL, (xmlChar*)inGEDPktCfg->fields[i]->name.Get(), (xmlChar*)inSint8);
+					else
+						xmlNodePtrChild = ::xmlNewChild (xmlNodePtrContent, NULL, (xmlChar*)inGEDPktCfg->fields[i]->name.Get(), NULL);
+					if (inSint8 != NULL) delete [] inSint8;
+				}
+				break;
 				case DATA_FLOAT64 :
 				{
 					Float64 inFloat64=0.;
@@ -3381,6 +3450,17 @@ bool GEDRcdToXmlNodeLight (TGEDRcd *inGEDRcd, const TBuffer <TGEDPktCfg> &inGEDP
 				}
 				break;
 				case DATA_STRING :
+				{
+					SInt8 *inSint8=NULL; 
+					*inChunk >> inSint8;
+					if (CString(inSint8).GetLength() > 0) 
+						xmlNodePtrChild = ::xmlNewChild (xmlNodePtrContent, NULL, (xmlChar*)inGEDPktCfg->fields[i]->name.Get(), (xmlChar*)inSint8);
+					else
+						xmlNodePtrChild = ::xmlNewChild (xmlNodePtrContent, NULL, (xmlChar*)inGEDPktCfg->fields[i]->name.Get(), NULL);
+					if (inSint8 != NULL) delete [] inSint8;
+				}
+				break;
+				case DATA_LSTRING :
 				{
 					SInt8 *inSint8=NULL; 
 					*inChunk >> inSint8;
@@ -3678,6 +3758,14 @@ TGEDRcd * GEDXmlNodeToRcd (const TBuffer <TGEDPktCfg> &inGEDPktCfgs, xmlNodePtr 
 											outChunk << (SInt8*)"";
 									}
 									break;
+									case DATA_LSTRING :
+									{
+										if (locXMLNodePtr->children != NULL)
+											outChunk << (SInt8*) locXMLNodePtr->children->content;
+										else
+											outChunk << (SInt8*)"";
+									}
+									break;
 									case DATA_FLOAT64 :
 									{
 										if (locXMLNodePtr->children != NULL)
@@ -3962,6 +4050,14 @@ TGEDRcd * GEDXmlNodeToRcd (const TBuffer <TGEDPktCfg> &inGEDPktCfgs, xmlNodePtr 
 											outChunk << (SInt8*)"";
 									}
 									break;
+									case DATA_LSTRING :
+									{
+										if (locXMLNodePtr->children != NULL)
+											outChunk << (SInt8*) locXMLNodePtr->children->content;
+										else
+											outChunk << (SInt8*)"";
+									}
+									break;
 									case DATA_FLOAT64 :
 									{
 										if (locXMLNodePtr->children != NULL)
@@ -4145,6 +4241,14 @@ TGEDRcd * GEDXmlNodeToRcd (const TBuffer <TGEDPktCfg> &inGEDPktCfgs, xmlNodePtr 
 									}
 									break;
 									case DATA_STRING :
+									{
+										if (locXMLNodePtr->children != NULL)
+											outChunk << (SInt8*) locXMLNodePtr->children->content;
+										else
+											outChunk << (SInt8*) "";
+									}
+									break;
+									case DATA_LSTRING :
 									{
 										if (locXMLNodePtr->children != NULL)
 											outChunk << (SInt8*) locXMLNodePtr->children->content;
@@ -4396,6 +4500,17 @@ CString GEDRcdToString (TGEDRcd *inGEDRcd, const TBuffer <TGEDPktCfg> &inGEDPktC
 				}
 				break;
 				case DATA_STRING :
+				{
+					SInt8 *inSint8=NULL; 
+					*inChunk >> inSint8;
+					if (CString(inSint8).GetLength() > 0) 
+						outString += " " + inGEDPktCfg->fields[i]->name + "=" + CString(inSint8);
+					else
+						outString += " " + inGEDPktCfg->fields[i]->name + "=";
+					if (inSint8 != NULL) delete [] inSint8;
+				}
+				break;
+				case DATA_LSTRING :
 				{
 					SInt8 *inSint8=NULL; 
 					*inChunk >> inSint8;

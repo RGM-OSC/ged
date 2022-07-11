@@ -53,6 +53,7 @@ CGEDBackEndMySQL::CGEDBackEndMySQL   		()
 		  m_MySQLQuotFilter		(true),
 		  m_MySQLNoBackslashEscapes	("true"),
 		  m_MySQLVarcharLength		(VARCHAR_LEN_STR_DEFAULT),
+		  m_MySQLVarcharLargeLength	(CULOTTEDEGRANDMERE),
 		  m_Na		     		(0L),
 		  m_Nh		     		(0L),
 		  m_Ns		     		(0L),
@@ -134,6 +135,9 @@ bool CGEDBackEndMySQL::Initialize (const TGEDCfg &inGEDCfg)
 
 	if (inGEDCfg.bkdcfg.Contains(GEDCfgMySQLVarcharLength) && const_cast<TGEDCfg&>(inGEDCfg).bkdcfg[GEDCfgMySQLVarcharLength].GetLength()>0)
 		m_MySQLVarcharLength = *const_cast <TGEDCfg &> (inGEDCfg).bkdcfg[GEDCfgMySQLVarcharLength][0];
+
+	if (inGEDCfg.bkdcfg.Contains(GEDCfgMySQLVarcharLargeLength) && const_cast<TGEDCfg&>(inGEDCfg).bkdcfg[GEDCfgMySQLVarcharLargeLength].GetLength()>0)
+		m_MySQLVarcharLargeLength = *const_cast <TGEDCfg &> (inGEDCfg).bkdcfg[GEDCfgMySQLVarcharLargeLength][0];
 
 	if (!::mysql_real_connect (&m_MYSQL, m_MySQLHost.Get(), m_MySQLLogin.Get(), m_MySQLPassword.Get(), m_MySQLDatabase.Get(),
 				    m_MySQLPort, NULL, 0))
@@ -384,6 +388,14 @@ bool CGEDBackEndMySQL::Push (const CString &inAddr, const int inQueue, const TGE
 					}
 					break;
 
+					case DATA_LSTRING :
+					{
+						char *inStr=NULL; inChunk >> inStr; CString inString(inStr); if (inStr) delete [] inStr; 
+						GED_MYSQL_FILTER_STRING(inString,m_MySQLLtGtFilter,m_MySQLQuotFilter);
+						outSQL += " AND " + inGEDPktCfg->fields[*inGEDPktCfg->keyidc[i]]->name + " LIKE \'" + inString + "\'";
+					}
+					break;
+
 					case DATA_SINT32 :
 					{
 						long inLong; inChunk >> inLong;
@@ -520,6 +532,16 @@ bool CGEDBackEndMySQL::Push (const CString &inAddr, const int inQueue, const TGE
 									outSQL += ", " + inGEDPktCfg->fields[i]->name + "=\'" + str + "\'";
 								}
 								break;
+								case DATA_LSTRING :
+								{
+									SInt8 *inSint8=NULL; 
+									inPktData >> inSint8; 
+									CString str(inSint8);
+									if (inSint8 != NULL) delete [] inSint8;
+									GED_MYSQL_FILTER_STRING(str,m_MySQLLtGtFilter,m_MySQLQuotFilter);
+									outSQL += ", " + inGEDPktCfg->fields[i]->name + "=\'" + str + "\'";
+								}
+								break;
 								case DATA_FLOAT64 :
 								{
 									Float64 inFloat64=0.;
@@ -606,6 +628,16 @@ bool CGEDBackEndMySQL::Push (const CString &inAddr, const int inQueue, const TGE
 									outSQL += ", " + inGEDPktCfg->fields[i]->name + "=\'" + str + "\'";
 								}
 								break;
+								case DATA_LSTRING :
+								{
+									SInt8 *inSint8=NULL; 
+									inPktData >> inSint8; 
+									CString str(inSint8);
+									if (inSint8 != NULL) delete [] inSint8;
+									GED_MYSQL_FILTER_STRING(str,m_MySQLLtGtFilter,m_MySQLQuotFilter);
+									outSQL += ", " + inGEDPktCfg->fields[i]->name + "=\'" + str + "\'";
+								}
+								break;
 								case DATA_FLOAT64 :
 								{
 									Float64 inFloat64=0.;
@@ -646,9 +678,9 @@ bool CGEDBackEndMySQL::Push (const CString &inAddr, const int inQueue, const TGE
 						GED_MYSQL_DATA_TB_COL_RTV_SEC + ", " +
 						GED_MYSQL_DATA_TB_COL_RTV_USEC + ", " +
 						GED_MYSQL_DATA_TB_COL_MTV_SEC + ", " +
-            GED_MYSQL_DATA_TB_COL_MTV_USEC + ", " +
-            GED_MYSQL_DATA_TB_COL_FTV_SEC + ", " +
-            GED_MYSQL_DATA_TB_COL_FTV_USEC + ", " +
+						GED_MYSQL_DATA_TB_COL_MTV_USEC + ", " +
+						GED_MYSQL_DATA_TB_COL_FTV_SEC + ", " +
+						GED_MYSQL_DATA_TB_COL_FTV_USEC + ", " +
 						GED_MYSQL_DATA_TB_COL_SRC + ", ";
 
 				for (size_t i=0; i<inGEDPktCfg->fields.GetLength(); i++)
@@ -657,19 +689,19 @@ bool CGEDBackEndMySQL::Push (const CString &inAddr, const int inQueue, const TGE
 					if (i<inGEDPktCfg->fields.GetLength()-1) outSQL += ", ";
 				}
 
-          m_Id++;
-          outSQL += ") VALUES ( '', \'a\', " +
-					CString((UInt32)inGEDPktIn->tv.tv_sec) + ", " + 
-					CString((UInt32)inGEDPktIn->tv.tv_usec) + ", " + 
-					CString((UInt32)inGEDPktIn->tv.tv_sec) + ", " + 
-					CString((UInt32)inGEDPktIn->tv.tv_usec) + ", " + 
-					CString((UInt32)tv.tv_sec) + ", " + 
-					CString((UInt32)tv.tv_usec) + ", " + 
-					CString((UInt32)inGEDPktIn->tv.tv_sec) + ", " + 
-          CString((UInt32)inGEDPktIn->tv.tv_usec) + ", " +
-          CString((UInt32)inGEDPktIn->tv.tv_sec) + ", " +
-					CString((UInt32)inGEDPktIn->tv.tv_usec) + ", \'" + 
-					inAddr + CString((inGEDPktIn->req&GED_PKT_REQ_SRC_RELAY)?"/1":"/0") + "\', ";
+				m_Id++;
+				outSQL += ") VALUES ( '', \'a\', " +
+				CString((UInt32)inGEDPktIn->tv.tv_sec) + ", " + 
+				CString((UInt32)inGEDPktIn->tv.tv_usec) + ", " + 
+				CString((UInt32)inGEDPktIn->tv.tv_sec) + ", " + 
+				CString((UInt32)inGEDPktIn->tv.tv_usec) + ", " + 
+				CString((UInt32)tv.tv_sec) + ", " + 
+				CString((UInt32)tv.tv_usec) + ", " + 
+				CString((UInt32)inGEDPktIn->tv.tv_sec) + ", " + 
+				CString((UInt32)inGEDPktIn->tv.tv_usec) + ", " +
+				CString((UInt32)inGEDPktIn->tv.tv_sec) + ", " +
+				CString((UInt32)inGEDPktIn->tv.tv_usec) + ", \'" + 
+				inAddr + CString((inGEDPktIn->req&GED_PKT_REQ_SRC_RELAY)?"/1":"/0") + "\', ";
 
 				CChunk inChunk (inGEDPktIn->data, inGEDPktIn->len, inTData, false);
 
@@ -679,18 +711,32 @@ bool CGEDBackEndMySQL::Push (const CString &inAddr, const int inQueue, const TGE
 					{
 						case DATA_STRING :
 						{
-                 char *inStr=NULL; inChunk>>inStr; CString inStg(inStr); if (inStr) delete [] inStr;
-						     GED_MYSQL_FILTER_STRING(inStg,m_MySQLLtGtFilter,m_MySQLQuotFilter);
-                 if ( CString(inStg.Get()) != CString("0")) 
-            {
-                 outSQL += "\'" + inStg + "\'"; 
-            }
-            else
-            {
-                outSQL += "\'\'"; 
-            }
-      
-						}
+							char *inStr=NULL; inChunk>>inStr; CString inStg(inStr); if (inStr) delete [] inStr;
+							GED_MYSQL_FILTER_STRING(inStg,m_MySQLLtGtFilter,m_MySQLQuotFilter);
+								if ( CString(inStg.Get()) != CString("0")) 
+							{
+								outSQL += "\'" + inStg + "\'"; 
+							}
+							else
+							{
+								outSQL += "\'\'"; 
+							}
+							}
+						break;
+
+						case DATA_LSTRING :
+						{
+                			char *inStr=NULL; inChunk>>inStr; CString inStg(inStr); if (inStr) delete [] inStr;
+						    GED_MYSQL_FILTER_STRING(inStg,m_MySQLLtGtFilter,m_MySQLQuotFilter);
+                 			if ( CString(inStg.Get()) != CString("0")) 
+							{
+							     outSQL += "\'" + inStg + "\'"; 
+							}
+							else
+							{
+							    outSQL += "\'\'"; 
+							}
+      					}
 						break;
 
 						case DATA_SINT32 :
@@ -809,6 +855,14 @@ bool CGEDBackEndMySQL::Push (const CString &inAddr, const int inQueue, const TGE
 					}
 					break;
 
+					case DATA_LSTRING :
+					{
+						char *inStr=NULL; inChunk>>inStr; CString inStg(inStr); if (inStr) delete [] inStr;
+						GED_MYSQL_FILTER_STRING(inStg,m_MySQLLtGtFilter,m_MySQLQuotFilter);
+						outSQL += ", \'" + inStg + "\'";
+					}
+					break;
+
 					case DATA_SINT32 :
 					{
 						long n=0L; inChunk>>n; outSQL += ", " + CString(n);
@@ -914,24 +968,47 @@ bool CGEDBackEndMySQL::Drop (const CString &inAddr, const int inQueue, const TGE
 				{
 					case DATA_STRING :
 					{
-           #ifdef __GED_DEBUG_SQL__
-         			CGEDCtx::m_GEDCtx->SysLog (GED_SYSLOG_INFO, GED_SYSLOG_LEV_DEBUG, "Field " + CString(inGEDPktCfg->fields[i]->name) + " is a DATA_STRING");
-           #endif
-           if (inGEDPktIn->data != NULL)
-           {
-              char *inStr=NULL;
-              inChunk >> inStr;
-              CString inString(inStr); 
-              if (inStr) delete [] inStr; 
-            	GED_MYSQL_FILTER_STRING(inString,m_MySQLLtGtFilter,m_MySQLQuotFilter);
-              if ( inString.GetLength() != 0)	outSQL += " AND " + inGEDPktCfg->fields[i]->name + " LIKE \'" + inString + "\'";
-              if ( inString.GetLength() != 0)	delSQL += " AND " + inGEDPktCfg->fields[i]->name + " LIKE \'" + inString + "\'";
-           }
-           else
-           {
-           outSQL += " AND " + inGEDPktCfg->fields[i]->name + " LIKE \'%\'";
-           delSQL += " AND " + inGEDPktCfg->fields[i]->name + " LIKE \'%\'";
-           }
+						#ifdef __GED_DEBUG_SQL__
+							CGEDCtx::m_GEDCtx->SysLog (GED_SYSLOG_INFO, GED_SYSLOG_LEV_DEBUG, "Field " + CString(inGEDPktCfg->fields[i]->name) + " is a DATA_STRING");
+						#endif
+						if (inGEDPktIn->data != NULL)
+						{
+							char *inStr=NULL;
+							inChunk >> inStr;
+							CString inString(inStr); 
+							if (inStr) delete [] inStr; 
+							GED_MYSQL_FILTER_STRING(inString,m_MySQLLtGtFilter,m_MySQLQuotFilter);
+							if ( inString.GetLength() != 0)	outSQL += " AND " + inGEDPktCfg->fields[i]->name + " LIKE \'" + inString + "\'";
+							if ( inString.GetLength() != 0)	delSQL += " AND " + inGEDPktCfg->fields[i]->name + " LIKE \'" + inString + "\'";
+						}
+						else
+						{
+						outSQL += " AND " + inGEDPktCfg->fields[i]->name + " LIKE \'%\'";
+						delSQL += " AND " + inGEDPktCfg->fields[i]->name + " LIKE \'%\'";
+						}
+					}
+					break;
+
+					case DATA_LSTRING :
+					{
+						#ifdef __GED_DEBUG_SQL__
+							CGEDCtx::m_GEDCtx->SysLog (GED_SYSLOG_INFO, GED_SYSLOG_LEV_DEBUG, "Field " + CString(inGEDPktCfg->fields[i]->name) + " is a DATA_LSTRING");
+						#endif
+						if (inGEDPktIn->data != NULL)
+						{
+							char *inStr=NULL;
+							inChunk >> inStr;
+							CString inString(inStr); 
+							if (inStr) delete [] inStr; 
+							GED_MYSQL_FILTER_STRING(inString,m_MySQLLtGtFilter,m_MySQLQuotFilter);
+							if ( inString.GetLength() != 0)	outSQL += " AND " + inGEDPktCfg->fields[i]->name + " LIKE \'" + inString + "\'";
+							if ( inString.GetLength() != 0)	delSQL += " AND " + inGEDPktCfg->fields[i]->name + " LIKE \'" + inString + "\'";
+						}
+						else
+						{
+						outSQL += " AND " + inGEDPktCfg->fields[i]->name + " LIKE \'%\'";
+						delSQL += " AND " + inGEDPktCfg->fields[i]->name + " LIKE \'%\'";
+						}
 					}
 					break;
 
@@ -1014,6 +1091,14 @@ bool CGEDBackEndMySQL::Drop (const CString &inAddr, const int inQueue, const TGE
 						switch (inGEDPktCfg->fields[*inGEDPktCfg->keyidc[i]]->type)
 						{
 							case DATA_STRING :
+							{
+								char *inStr=NULL; inChunk >> inStr; CString inString(inStr); if (inStr) delete [] inStr;
+								GED_MYSQL_FILTER_STRING(inString,m_MySQLLtGtFilter,m_MySQLQuotFilter);
+								outSQL += " AND " + inGEDPktCfg->name + GED_MYSQL_DATA_TBL_QUEUE_SYNC + "." + inGEDPktCfg->fields[*inGEDPktCfg->keyidc[i]]->name + " LIKE \'" + inString + "\'";
+							}
+							break;
+
+							case DATA_LSTRING :
 							{
 								char *inStr=NULL; inChunk >> inStr; CString inString(inStr); if (inStr) delete [] inStr;
 								GED_MYSQL_FILTER_STRING(inString,m_MySQLLtGtFilter,m_MySQLQuotFilter);
@@ -1106,6 +1191,14 @@ bool CGEDBackEndMySQL::Drop (const CString &inAddr, const int inQueue, const TGE
 							switch (inGEDPktCfg->fields[*inGEDPktCfg->keyidc[i]]->type)
 							{
 								case DATA_STRING :
+								{
+									char *inStr=NULL; inChunk >> inStr; CString inString(inStr); if (inStr) delete [] inStr;
+									GED_MYSQL_FILTER_STRING(inString,m_MySQLLtGtFilter,m_MySQLQuotFilter);
+									outSQL += " AND " + inGEDPktCfg->fields[*inGEDPktCfg->keyidc[i]]->name + " LIKE \'" + inString + "\'";
+								}
+								break;
+
+								case DATA_LSTRING :
 								{
 									char *inStr=NULL; inChunk >> inStr; CString inString(inStr); if (inStr) delete [] inStr;
 									GED_MYSQL_FILTER_STRING(inString,m_MySQLLtGtFilter,m_MySQLQuotFilter);
@@ -1753,6 +1846,14 @@ bool CGEDBackEndMySQL::Recover (const TBuffer <TGEDRcd *> &inGEDRecords, void (*
 						}
 						break;
 
+						case DATA_LSTRING :
+						{
+							char *inStr=NULL; inChunk>>inStr; CString inStg(inStr); if (inStr) delete [] inStr;
+							GED_MYSQL_FILTER_STRING(inStg,m_MySQLLtGtFilter,m_MySQLQuotFilter);
+							outSQL += ", \'" + inStg + "\'";
+						}
+						break;
+
 						case DATA_SINT32 :
 						{
 							long n=0L; inChunk>>n; outSQL += ", " + CString(n);
@@ -1869,6 +1970,14 @@ bool CGEDBackEndMySQL::Recover (const TBuffer <TGEDRcd *> &inGEDRecords, void (*
 						}
 						break;
 
+						case DATA_LSTRING :
+						{
+							char *inStr=NULL; inChunk>>inStr; CString inStg(inStr); if (inStr) delete [] inStr;
+							GED_MYSQL_FILTER_STRING(inStg,m_MySQLLtGtFilter,m_MySQLQuotFilter);
+							outSQL += ", \'" + inStg + "\'";
+						}
+						break;
+
 						case DATA_SINT32 :
 						{
 							long n=0L; inChunk>>n; outSQL += ", " + CString(n);
@@ -1966,6 +2075,14 @@ bool CGEDBackEndMySQL::Recover (const TBuffer <TGEDRcd *> &inGEDRecords, void (*
 					switch (inChunk.NextDataIs())
 					{
 						case DATA_STRING :
+						{
+							char *inStr=NULL; inChunk>>inStr; CString inStg(inStr); if (inStr) delete [] inStr;
+							GED_MYSQL_FILTER_STRING(inStg,m_MySQLLtGtFilter,m_MySQLQuotFilter);
+							outSQL += ", \'" + inStg + "\'";
+						}
+						break;
+
+						case DATA_LSTRING :
 						{
 							char *inStr=NULL; inChunk>>inStr; CString inStg(inStr); if (inStr) delete [] inStr;
 							GED_MYSQL_FILTER_STRING(inStg,m_MySQLLtGtFilter,m_MySQLQuotFilter);
@@ -2104,6 +2221,12 @@ bool CGEDBackEndMySQL::NotifyVersionUpgrade (const UInt32 inOldVersion)
 									" VARCHAR(" + m_MySQLVarcharLength + ") NOT NULL DEFAULT \'\'");
 								if (!ExecuteSQLQuery (outReq)) return false;
 							}
+							if (m_GEDCfg.pkts[i]->fields[j]->type == DATA_LSTRING)
+							{
+								CString outReq (outSQL + m_GEDCfg.pkts[i]->fields[j]->name + 
+									" TEXT(" + m_MySQLVarcharLargeLength + ") CHARACTER SET utf8");
+								if (!ExecuteSQLQuery (outReq)) return false;
+							}
 						}
 					}
 				}
@@ -2162,6 +2285,11 @@ bool CGEDBackEndMySQL::NotifyPktCfgChange (const long inType, const TGEDPktCfgCh
 					case DATA_STRING :
 					{
 						outSQL += ", " + inGEDPktCfg->fields[i]->name + " VARCHAR(" + m_MySQLVarcharLength + ") NOT NULL DEFAULT \'\'";
+					}
+					break;
+					case DATA_LSTRING :
+					{
+						outSQL += ", " + inGEDPktCfg->fields[i]->name + " TEXT(" + m_MySQLVarcharLargeLength + ") CHARACTER SET utf8";
 					}
 					break;
 					case DATA_FLOAT64 :
@@ -2232,6 +2360,11 @@ bool CGEDBackEndMySQL::NotifyPktCfgChange (const long inType, const TGEDPktCfgCh
 						outSQL += ", " + inGEDPktCfg->fields[i]->name + " VARCHAR(" + m_MySQLVarcharLength + ") NOT NULL DEFAULT \'\'";
 					}
 					break;
+					case DATA_LSTRING :
+					{
+						outSQL += ", " + inGEDPktCfg->fields[i]->name + " TEXT(" + m_MySQLVarcharLargeLength + ") CHARACTER SET utf8";
+					}
+					break;
 					case DATA_FLOAT64 :
 					{
 						outSQL += ", " + inGEDPktCfg->fields[i]->name + " DOUBLE NOT NULL DEFAULT 0";
@@ -2286,6 +2419,11 @@ bool CGEDBackEndMySQL::NotifyPktCfgChange (const long inType, const TGEDPktCfgCh
 					case DATA_STRING :
 					{
 						outSQL += ", " + inGEDPktCfg->fields[i]->name + " VARCHAR(" + m_MySQLVarcharLength + ") NOT NULL DEFAULT \'\'";
+					}
+					break;
+					case DATA_LSTRING :
+					{
+						outSQL += ", " + inGEDPktCfg->fields[i]->name + " TEXT(" + m_MySQLVarcharLargeLength + ") CHARACTER SET utf8";
 					}
 					break;
 					case DATA_FLOAT64 :
@@ -2343,6 +2481,11 @@ bool CGEDBackEndMySQL::NotifyPktCfgChange (const long inType, const TGEDPktCfgCh
 					case DATA_STRING :
 					{
 						outSQL += ", " + inGEDPktCfg->fields[i]->name + " VARCHAR(" + m_MySQLVarcharLength + ") NOT NULL DEFAULT \'\'";
+					}
+					break;
+					case DATA_LSTRING :
+					{
+						outSQL += ", " + inGEDPktCfg->fields[i]->name + " TEXT(" + m_MySQLVarcharLargeLength + ") CHARACTER SET utf8";
 					}
 					break;
 					case DATA_FLOAT64 :
@@ -2740,6 +2883,14 @@ CString CGEDBackEndMySQL::GetSelectQuery (const int inQueue, const TGEDPktIn *in
 				}
 				break;
 
+				case DATA_LSTRING :
+				{
+					char *inStr=NULL; inChunk >> inStr; CString inString(inStr); if (inStr) delete [] inStr; 
+					GED_MYSQL_FILTER_STRING(inString,m_MySQLLtGtFilter,m_MySQLQuotFilter);
+					outSQL += " AND " + inGEDPktCfg->fields[*inGEDPktCfg->keyidc[i]]->name + " LIKE \'" + inString + "\'";
+				}
+				break;
+
 				case DATA_SINT32 :
 				{
 					long inLong=0L; inChunk >> inLong;
@@ -2813,6 +2964,7 @@ TGEDARcd * CGEDBackEndMySQL::MySQLRowToARcd (MYSQL_ROW &inSQLRow, TGEDPktCfg *in
 		switch (inGEDPktCfg->fields[i]->type)
 		{
 			case DATA_STRING  : outChunk << inSQLRow[i+GED_MYSQL_DATA_TB_COL_FIRST_DATA_IDX];		      break;
+			case DATA_LSTRING  : outChunk << inSQLRow[i+GED_MYSQL_DATA_TB_COL_FIRST_DATA_IDX];		      break;
 			case DATA_SINT32  : outChunk << CString(inSQLRow[i+GED_MYSQL_DATA_TB_COL_FIRST_DATA_IDX]).ToLong();   break;
 			case DATA_FLOAT64 : outChunk << CString(inSQLRow[i+GED_MYSQL_DATA_TB_COL_FIRST_DATA_IDX]).ToDouble(); break;
 		}
@@ -2878,6 +3030,7 @@ TGEDHRcd * CGEDBackEndMySQL::MySQLRowToHRcd (MYSQL_ROW &inSQLRow, TGEDPktCfg *in
 		switch (inGEDPktCfg->fields[i]->type)
 		{
 			case DATA_STRING  : outChunk << inSQLRow[i+GED_MYSQL_DATA_TB_COL_FIRST_DATA_IDX];		      break;
+			case DATA_LSTRING  : outChunk << inSQLRow[i+GED_MYSQL_DATA_TB_COL_FIRST_DATA_IDX];		      break;
 			case DATA_SINT32  : outChunk << CString(inSQLRow[i+GED_MYSQL_DATA_TB_COL_FIRST_DATA_IDX]).ToLong();   break;
 			case DATA_FLOAT64 : outChunk << CString(inSQLRow[i+GED_MYSQL_DATA_TB_COL_FIRST_DATA_IDX]).ToDouble(); break;
 		}
@@ -2932,6 +3085,7 @@ TGEDSRcd * CGEDBackEndMySQL::MySQLRowToSRcd (MYSQL_ROW &inSQLRow, TGEDPktCfg *in
 		switch (inGEDPktCfg->fields[i]->type)
 		{
 			case DATA_STRING  : outChunk << inSQLRow[i+GED_MYSQL_DATA_TB_COL_FIRST_DATA_IDX];		      break;
+			case DATA_LSTRING  : outChunk << inSQLRow[i+GED_MYSQL_DATA_TB_COL_FIRST_DATA_IDX];		      break;
 			case DATA_SINT32  : outChunk << CString(inSQLRow[i+GED_MYSQL_DATA_TB_COL_FIRST_DATA_IDX]).ToLong();   break;
 			case DATA_FLOAT64 : outChunk << CString(inSQLRow[i+GED_MYSQL_DATA_TB_COL_FIRST_DATA_IDX]).ToDouble(); break;
 		}

@@ -678,6 +678,16 @@ int main (int argc, char **argv)
 					outChunk << str.Get();
 				}
 				break;
+				case DATA_LSTRING  : 
+				{
+					CString str(argv[i]);
+					int n; while ((n = IsUtf8(str)) != 0) str.Delete (n-1, 1);
+					if (str.GetLength() != ::strlen(argv[i])) 
+						::fprintf (stderr, "warning : found a non utf8 sequence for \"%s\" field number \"%d\", trying to remove dummy chars...\n", 
+							   inGEDPktCfg->fields[j]->name.Get(), j);
+					outChunk << str.Get();
+				}
+				break;
 			}
 	}
 	

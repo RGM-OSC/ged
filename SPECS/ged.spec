@@ -1,7 +1,7 @@
 Summary: Generic Event Dispatcher
 Name: ged
 Version: 1.6
-Release: 8.rgm
+Release: 10.rgm
 Source: %{name}.tar.gz
 BuildRoot: /tmp/%{name}-%{version}
 Group: Applications/Base
@@ -205,6 +205,13 @@ This is the devel part as you may want to write your own backend.
 %{_libdir}/pkgconfig/%{name}-%{version}.pc
 
 %changelog
+* Thu Oct 20 2022 Christophe Cassan <ccassan@fr.scc.com> - 1.6-10.rgm
+- Add two types of event secu_display and secu_nodisplay
+- New large string type log columns added for these types
+
+* Thu Oct 20 2022 Alex Rocher <arocher@fr.scc.com> - 1.6-9.rgm
+- Add some columns for SOC
+
 * Fri Sep 10 2021 Alex Rocher <arocher@fr.scc.com> - 1.6-8.rgm
 - Deactivate gedt include
 

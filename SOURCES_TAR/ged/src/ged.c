@@ -1835,6 +1835,11 @@ void * CGEDServerListener::m_GEDConnInFifoCB (void *)
 						chk << inFields[j]->Get();
 					}
 					break;
+					case DATA_LSTRING :
+					{
+						chk << inFields[j]->Get();
+					}
+					break;
 				}
 			}
 

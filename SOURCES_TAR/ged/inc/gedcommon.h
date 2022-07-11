@@ -287,6 +287,7 @@ const static CString			GEDCfgPacketBeg			("<packet");
 const static CString			GEDCfgPacketType		("type");
 const static CString			GEDCfgPacketName		("name");
 const static CString			GEDCfgPacketFieldString		("STRING");
+const static CString			GEDCfgPacketFieldLargeString	("LSTRING");
 const static CString			GEDCfgPacketFieldSInt32		("SINT32");
 const static CString			GEDCfgPacketFieldFloat64	("FLOAT64");
 const static CString			GEDCfgPacketFieldMeta		("META");

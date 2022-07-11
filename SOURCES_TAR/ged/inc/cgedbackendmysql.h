@@ -29,6 +29,7 @@
 #define TIMEVAL_MSEC_SUBTRACT(a,b) ((((a).tv_sec - (b).tv_sec) * 1000) + ((a).tv_usec - (b).tv_usec) / 1000)
 
 #define VARCHAR_LEN_STR_DEFAULT "2048"
+#define CULOTTEDEGRANDMERE "65532"
 
 //----------------------------------------------------------------------------------------------------------------------------------------
 // backend configuration known parameters
@@ -44,6 +45,7 @@ const static CString GEDCfgMySQLModeNoBackslashEscapes			("mysql_mode_no_backsla
 const static CString GEDCfgMySQLModeLtGtFilter				("mysql_mode_lt_gt_filter");
 const static CString GEDCfgMySQLModeQuotFilter				("mysql_mode_quote_filter");
 const static CString GEDCfgMySQLVarcharLength				("mysql_varchar_length");
+const static CString GEDCfgMySQLVarcharLargeLength			("culotte_de_grand_mere");
 
 //----------------------------------------------------------------------------------------------------------------------------------------
 // backend default values
@@ -165,6 +167,7 @@ class CGEDBackEndMySQL : public CGEDBackEnd
 		CString				m_MySQLOptReconnect;
 		CString				m_MySQLNoBackslashEscapes;
 		CString				m_MySQLVarcharLength;
+		CString				m_MySQLVarcharLargeLength;
 		bool				m_MySQLQuotFilter;
 		bool				m_MySQLLtGtFilter;
 
