@@ -10,7 +10,7 @@ License: GPL
 
 BuildRequires: gcc >= 4.0.0
 BuildRequires: pkgconfig
-BuildRequires: libgenerics-devel >= 1.2-1
+BuildRequires: libgenerics-devel >= 1.3-4
 BuildRequires: libgcrypt-devel
 BuildRequires: mysql-devel >= 5.0.3
 BuildRequires: glib2-devel
@@ -18,7 +18,7 @@ BuildRequires: zlib-devel
 #BuildRequires: db4-devel
 BuildRequires: rpm-macros-rgm
 
-Requires: libgenerics >= 1.2-1
+Requires: libgenerics >= 1.3-4
 Requires: openssl
 Requires: libgcrypt
 Requires: glib2
@@ -59,9 +59,9 @@ License: GPL
 Group: Applications/Base
 
 Requires: %{name} = %{version}
-Requires: libgenerics-devel >= 1.2
+Requires: libgenerics-devel >= 1.3-4
 Requires: libgcrypt-devel
-Requires: mysql-devel >= 5.0.0
+Requires: mysql-devel >= 5.0.3
 Requires: glib2-devel
 Requires: zlib-devel
 #Requires: db4-devel
