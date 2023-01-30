@@ -1,7 +1,7 @@
 Summary: Generic Event Dispatcher
 Name: ged
 Version: 1.6
-Release: 11.rgm
+Release: 12.rgm
 Source: %{name}.tar.gz
 BuildRoot: /tmp/%{name}-%{version}
 Group: Applications/Base
@@ -205,6 +205,9 @@ This is the devel part as you may want to write your own backend.
 %{_libdir}/pkgconfig/%{name}-%{version}.pc
 
 %changelog
+* Mon Jan 30 2023 Eric Belhomme <ebelhomme@fr.scc.com> - 1.6-12.rgm
+- add type 3 (stargate2noc) document type for stargate communication
+
 * Tue Nov 15 2022 Christophe Cassan <ccassan@fr.scc.com> - 1.6-11.rgm
 - Add fingerprint string column for event tables
 
