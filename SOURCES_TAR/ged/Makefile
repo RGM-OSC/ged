@@ -39,14 +39,14 @@ MOD	      := $(MODDUMMY) $(MODMYSQL)
 GEDDEBUG      := -D__GED_DEBUG_SQL__ -D__GED_DEBUG_SEM__
 
 # preprocessor directives -D
-GEDDEF        := -D__GED__ -D__GED_NTLM__ -D__GED_TUN__ $(GEDDEBUG) -fPIC
-GEDQDEF	      := -D__GEDQ__ -D__GED_NTLM__ -D__GED_TUN__ $(GEDDEBUG) -fPIC
+GEDDEF        := -D__GED__ -D__GED_TUN__ $(GEDDEBUG) -fPIC
+GEDQDEF	      := -D__GEDQ__ -D__GED_TUN__ $(GEDDEBUG) -fPIC
 
 # library dependencies
 LIBS	      := `pkg-config --libs libgenerics-1.3`
 LIBS	      += `pkg-config --libs glib-2.0`
 LIBS	      += -lssl -lpthread -lgcrypt -lz
-MYSQLLIBS     := /usr/lib64/mysql/libmysqlclient.so
+MYSQLLIBS     := /usr/lib64/libmariadb.so
 #BDBLIBS	      := /usr/lib64/libdb.so
 
 # paths
@@ -142,18 +142,6 @@ gedq.o : $(SRCCOR)/gedq.c
 	@echo "[CC] $<"
 	@$(CC) $(GEDQFLAGS) -c $<
 
-#cgedbackendbdb.o : $(SRCCOR)/cgedbackendbdb.c
-#	@echo "[CC] $<"
-#	@$(CC) $(GEDFLAGS) -o $@ -c $<
-
-#cgedbackendhdb.o : $(SRCCOR)/cgedbackendhdb.c
-#	@echo "[CC] $<"
-#	@$(CC) $(GEDFLAGS) -o $@ -c $<
-#
-#cgedbackendtdb.o : $(SRCCOR)/cgedbackendtdb.c
-#	@echo "[CC] $<"
-#	@$(CC) $(GEDFLAGS) -o $@ -c $<
-
 # main targets
 $(GED) : $(LIBGED) gedmain.o
 	@echo "[LK] $@"
@@ -188,14 +176,6 @@ gedmysql-1.6.so : $(SRCCOR)/cgedbackendmysql.c
 geddummy-1.6.so : $(SRCCOR)/cgedbackenddummy.c
 	@echo "[LK] $@"
 	@$(CC) -shared $(GEDFLAGS) $^ -o $@
-
-#gedhdb-1.5.so : cgedbackendbdb.o cgedbackendhdb.o
-#	@echo "[LK] $@"
-#	@$(CC) -shared $(GEDFLAGS) $^ -o $@ $(BDBLIBS)
-
-#gedtdb-1.5.so : cgedbackendbdb.o cgedbackendtdb.o
-#	@echo "[LK] $@"
-#	@$(CC) -shared $(GEDFLAGS) $^ -o $@ $(BDBLIBS)
 
 clean :
 	@echo -n "cleaning... "

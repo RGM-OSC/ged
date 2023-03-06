@@ -29,11 +29,7 @@ void DisplayHelp (const CString &inCmd)
 	::fprintf (stdout, "-> where options might be :\n");
 	::fprintf (stdout, "\t-v           print version and exit\n");
 	::fprintf (stdout, "\t-b           addr:port or socket file to bind to\n");
-	::fprintf (stdout, "\t-http-proxy  addr:port auth [user pass] where auth might be none|basic"
-	#ifdef __GED_NTLM__
-	"|ntlm"
-	#endif
-	"\n");
+	::fprintf (stdout, "\t-http-proxy  addr:port auth [user pass] where auth might be none|basic\n");
 	::fprintf (stdout, "\t-ack         seconds\n");
 	::fprintf (stdout, "\t-s           asc*|desc (peek only)\n");
 	::fprintf (stdout, "\t-tm          secmin secmax (peek only)\n");
@@ -207,22 +203,6 @@ int main (int argc, char **argv)
 						return 1;
 					}
 				}
-				#ifdef __GED_NTLM__
-				else if (inArgv2 == "ntlm")
-				{
-					inPAuth = GED_HTTP_PROXY_AUTH_NTLM;
-					if (i < argc-2)
-					{
-						inPUser = argv[++i];
-						inPPass = argv[++i];
-					}
-					else
-					{
-						DisplayHelp (inArgv0);
-						return 1;
-					}
-				}
-				#endif
 				else if (inArgv2 != "none")
 				{
 					DisplayHelp (inArgv0);
@@ -250,9 +230,6 @@ int main (int argc, char **argv)
 		else if (inArgv == CString("-v"))
 		{
 			::fprintf (stdout, "%s %s "
-			#if defined(__GED_NTLM__)
-			"[__GED_NTLM__] "
-			#endif
 			#if defined(__GED_TUN__)
 			"[__GED_TUN__] "
 			#endif

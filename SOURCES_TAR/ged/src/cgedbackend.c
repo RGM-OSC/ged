@@ -20,6 +20,7 @@
 
 #include "cgedbackend.h"
 #include "ged.h"
+#include <algorithm>
 
 //----------------------------------------------------------------------------------------------------------------------------------------
 // metaclass code resolution
@@ -251,7 +252,7 @@ TBuffer <TGEDRcd *> CGEDBackEnd::Dump (const int inQueue)
 {
 	TBuffer <TGEDRcd *> outGEDRcds; 
 
-	outGEDRcds.SetInc (max(max(m_aInc,m_hInc),m_sInc));
+	outGEDRcds.SetInc (std::max(std::max(m_aInc,m_hInc),m_sInc));
 
 	if (inQueue & GED_PKT_REQ_BKD_HISTORY) outGEDRcds += Peek (CString(), GED_PKT_REQ_BKD_HISTORY, NULL);
 	if (inQueue & GED_PKT_REQ_BKD_ACTIVE)  outGEDRcds += Peek (CString(), GED_PKT_REQ_BKD_ACTIVE,  NULL);

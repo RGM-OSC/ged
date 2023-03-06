@@ -19,6 +19,8 @@
 */
 
 #include "cgedbackendmysql.h"
+#include <algorithm>
+#include <sys/time.h>
 
 #define GED_MYSQL_FILTER_STRING(str,ltgt,quot) 			\
 	if (quot) {						\
@@ -120,7 +122,7 @@ bool CGEDBackEndMySQL::Initialize (const TGEDCfg &inGEDCfg)
 	if (inGEDCfg.bkdcfg.Contains(GEDCfgMySQLOptReconnect) && const_cast<TGEDCfg&>(inGEDCfg).bkdcfg[GEDCfgMySQLOptReconnect].GetLength()>0)
 	{
 		m_MySQLOptReconnect = *const_cast<TGEDCfg&>(inGEDCfg).bkdcfg[GEDCfgMySQLOptReconnect][0];
-		my_bool inReconnect = m_MySQLOptReconnect.ToBool();
+		bool inReconnect = m_MySQLOptReconnect.ToBool();
 		::mysql_options (&m_MYSQL, MYSQL_OPT_RECONNECT, (const char*)&inReconnect);
 	}
 
@@ -266,25 +268,25 @@ bool CGEDBackEndMySQL::Initialize (const TGEDCfg &inGEDCfg)
    	outSQL = "SELECT MAX(" + GED_MYSQL_DATA_TB_COL_ID + ") FROM " + *inTables[j];
 		if (!ExecuteSQLQuery (outSQL)) return false;
 		inSQLRes = ::mysql_store_result (&m_MYSQL); inSQLRow = ::mysql_fetch_row (inSQLRes);
-		m_Id = max(m_Id,(CString(inSQLRow[0]).ToULong()+1));
+		m_Id = std::max(m_Id,(CString(inSQLRow[0]).ToULong()+1));
 		::mysql_free_result (inSQLRes);
 
 		outSQL = "SELECT MAX(" + GED_MYSQL_DATA_TB_COL_ID + ") FROM " + *inTables[j] + GED_MYSQL_DATA_TBL_QUEUE_ACTIVE;
 		if (!ExecuteSQLQuery (outSQL)) return false;
 		inSQLRes = ::mysql_store_result (&m_MYSQL); inSQLRow = ::mysql_fetch_row (inSQLRes);
-		m_Ida = max(m_Ida,(CString(inSQLRow[0]).ToULong()+1));
+		m_Ida = std::max(m_Ida,(CString(inSQLRow[0]).ToULong()+1));
 		::mysql_free_result (inSQLRes);
    
     outSQL = "SELECT MAX(" + GED_MYSQL_DATA_TB_COL_ID + ") FROM " + *inTables[j] + GED_MYSQL_DATA_TBL_QUEUE_HISTORY;
 		if (!ExecuteSQLQuery (outSQL)) return false;
 		inSQLRes = ::mysql_store_result (&m_MYSQL); inSQLRow = ::mysql_fetch_row (inSQLRes);
-		m_Idh = max(m_Idh,(CString(inSQLRow[0]).ToULong()+1));
+		m_Idh = std::max(m_Idh,(CString(inSQLRow[0]).ToULong()+1));
 		::mysql_free_result (inSQLRes);
    
     outSQL = "SELECT MAX(" + GED_MYSQL_DATA_TB_COL_ID + ") FROM " + *inTables[j] + GED_MYSQL_DATA_TBL_QUEUE_SYNC;
 		if (!ExecuteSQLQuery (outSQL)) return false;
 		inSQLRes = ::mysql_store_result (&m_MYSQL); inSQLRow = ::mysql_fetch_row (inSQLRes);
-		m_Ids = max(m_Ids,(CString(inSQLRow[0]).ToULong()+1));
+		m_Ids = std::max(m_Ids,(CString(inSQLRow[0]).ToULong()+1));
 		::mysql_free_result (inSQLRes);
 	}
 
@@ -2108,7 +2110,7 @@ bool CGEDBackEndMySQL::Recover (const TBuffer <TGEDRcd *> &inGEDRecords, void (*
 
 				if (!ExecuteSQLQuery (outSQL)) return false;
 
-				m_Id = max(m_Id,inGEDHRcd->hid+1);
+				m_Id = std::max(m_Id,inGEDHRcd->hid+1);
 
 				nh++;
 			}
@@ -2560,6 +2562,8 @@ bool CGEDBackEndMySQL::NotifyPktCfgChange (const long inType, const TGEDPktCfgCh
 void * CGEDBackEndMySQL::m_TTLTimerCB (void *inParam)
 {
 	CGEDBackEndMySQL *inGEDBackEndMySQL = reinterpret_cast <CGEDBackEndMySQL *> (inParam);
+	bool Bcall_result;
+	void* VPcall_result;
 
 	while (true)
 	{
@@ -2581,7 +2585,13 @@ void * CGEDBackEndMySQL::m_TTLTimerCB (void *inParam)
 						 " WHERE " +
 							GED_MYSQL_DATA_TB_COL_OTV_SEC + "<=" + CString((UInt32)tv.tv_sec-inGEDBackEndMySQL->m_aTTL);
 
-				if (!inGEDBackEndMySQL->ExecuteSQLQuery (outSQL)) return false;
+				//if (!inGEDBackEndMySQL->ExecuteSQLQuery (outSQL)) return false;
+				Bcall_result = inGEDBackEndMySQL->ExecuteSQLQuery (outSQL);
+				if (!Bcall_result) {
+					VPcall_result = static_cast<void*>(&Bcall_result);
+					return VPcall_result;
+				}
+
 
 				na += ::mysql_affected_rows (&inGEDBackEndMySQL->m_MYSQL);
 			}
@@ -2600,7 +2610,12 @@ void * CGEDBackEndMySQL::m_TTLTimerCB (void *inParam)
 
 					sql.Substitute (CString("DELETE"),CString("SELECT *"));
 
-					if (!inGEDBackEndMySQL->ExecuteSQLQuery (sql)) return false;
+				//	if (!inGEDBackEndMySQL->ExecuteSQLQuery (sql)) return false;
+					Bcall_result = inGEDBackEndMySQL->ExecuteSQLQuery (outSQL);
+					if (!Bcall_result) {
+						VPcall_result = static_cast<void*>(&Bcall_result);
+						return VPcall_result;
+					}
 
 					MYSQL_RES *inSQLRes = ::mysql_store_result (&inGEDBackEndMySQL->m_MYSQL);
 					MYSQL_ROW  inSQLRow = NULL;
@@ -2616,11 +2631,12 @@ void * CGEDBackEndMySQL::m_TTLTimerCB (void *inParam)
 					::mysql_free_result (inSQLRes);
 				}
 
-				if (!inGEDBackEndMySQL->ExecuteSQLQuery (outSQL))
-				{
+				//if (!inGEDBackEndMySQL->ExecuteSQLQuery (outSQL))
+				Bcall_result = inGEDBackEndMySQL->ExecuteSQLQuery (outSQL);
+				if (!Bcall_result) {
 					for (size_t k=inGEDRcds.GetLength(); k>0; k--) ::DeleteGEDRcd (*inGEDRcds[k-1]);
-
-					return false;
+					VPcall_result = static_cast<void*>(&Bcall_result);
+					return VPcall_result;
 				}
 
 				for (size_t k=inGEDRcds.GetLength(), l=0; k>0; k--, l++)
@@ -2642,7 +2658,12 @@ void * CGEDBackEndMySQL::m_TTLTimerCB (void *inParam)
 							GED_MYSQL_DATA_TB_COL_QUEUE + "=\'s\' AND " +
 							GED_MYSQL_DATA_TB_COL_OTV_SEC + "<=" + CString((UInt32)tv.tv_sec-inGEDBackEndMySQL->m_sTTL);
 
-				if (!inGEDBackEndMySQL->ExecuteSQLQuery (outSQL)) return false;
+				//if (!inGEDBackEndMySQL->ExecuteSQLQuery (outSQL)) return false;
+				Bcall_result = inGEDBackEndMySQL->ExecuteSQLQuery (outSQL);
+				if (!Bcall_result) {
+					VPcall_result = static_cast<void*>(&Bcall_result);
+					return VPcall_result;
+				}
 
 				ns += ::mysql_affected_rows (&inGEDBackEndMySQL->m_MYSQL);
 			}
@@ -2658,27 +2679,47 @@ void * CGEDBackEndMySQL::m_TTLTimerCB (void *inParam)
 			for (size_t j=0; j<inGEDBackEndMySQL->m_GEDCfg.pkts.GetLength(); j++)
 			{
 				CString outSQL = "SELECT COUNT(*) FROM " + inGEDBackEndMySQL->m_GEDCfg.pkts[j]->name + " WHERE " + GED_MYSQL_DATA_TB_COL_QUEUE + "=\'a\'";
-				if (!inGEDBackEndMySQL->ExecuteSQLQuery (outSQL)) return false;
+				//if (!inGEDBackEndMySQL->ExecuteSQLQuery (outSQL)) return false;
+				Bcall_result = inGEDBackEndMySQL->ExecuteSQLQuery (outSQL);
+				if (!Bcall_result) {
+					VPcall_result = static_cast<void*>(&Bcall_result);
+					return VPcall_result;
+				}
 				MYSQL_RES *inSQLRes = ::mysql_store_result (&inGEDBackEndMySQL->m_MYSQL); MYSQL_ROW inSQLRow = ::mysql_fetch_row (inSQLRes);
 				inGEDBackEndMySQL->m_Na += CString(inSQLRow[0]).ToULong();
 				::mysql_free_result (inSQLRes);
 
 				outSQL = "SELECT COUNT(*) FROM " + inGEDBackEndMySQL->m_GEDCfg.pkts[j]->name + " WHERE " + GED_MYSQL_DATA_TB_COL_QUEUE + "=\'h\'";
-				if (!inGEDBackEndMySQL->ExecuteSQLQuery (outSQL)) return false;
+				//if (!inGEDBackEndMySQL->ExecuteSQLQuery (outSQL)) return false;
+				Bcall_result = inGEDBackEndMySQL->ExecuteSQLQuery (outSQL);
+				if (!Bcall_result) {
+					VPcall_result = static_cast<void*>(&Bcall_result);
+					return VPcall_result;
+				}
 				inSQLRes = ::mysql_store_result (&inGEDBackEndMySQL->m_MYSQL); inSQLRow = ::mysql_fetch_row (inSQLRes);
 				inGEDBackEndMySQL->m_Nh += CString(inSQLRow[0]).ToULong();
 				::mysql_free_result (inSQLRes);
 
 				outSQL = "SELECT COUNT(*) FROM " + inGEDBackEndMySQL->m_GEDCfg.pkts[j]->name + " WHERE " + GED_MYSQL_DATA_TB_COL_QUEUE + "=\'s\'";
-				if (!inGEDBackEndMySQL->ExecuteSQLQuery (outSQL)) return false;
+				//if (!inGEDBackEndMySQL->ExecuteSQLQuery (outSQL)) return false;
+				Bcall_result = inGEDBackEndMySQL->ExecuteSQLQuery (outSQL);
+				if (!Bcall_result) {
+					VPcall_result = static_cast<void*>(&Bcall_result);
+					return VPcall_result;
+				}
 				inSQLRes = ::mysql_store_result (&inGEDBackEndMySQL->m_MYSQL); inSQLRow = ::mysql_fetch_row (inSQLRes);
 				inGEDBackEndMySQL->m_Ns += CString(inSQLRow[0]).ToULong();
 				::mysql_free_result (inSQLRes);
 
 				outSQL = "SELECT MAX(" + GED_MYSQL_DATA_TB_COL_ID + ") FROM " + inGEDBackEndMySQL->m_GEDCfg.pkts[j]->name;
-				if (!inGEDBackEndMySQL->ExecuteSQLQuery (outSQL)) return false;
+				//if (!inGEDBackEndMySQL->ExecuteSQLQuery (outSQL)) return false;
+				Bcall_result = inGEDBackEndMySQL->ExecuteSQLQuery (outSQL);
+				if (!Bcall_result) {
+					VPcall_result = static_cast<void*>(&Bcall_result);
+					return VPcall_result;
+				}
 				inSQLRes = ::mysql_store_result (&inGEDBackEndMySQL->m_MYSQL); inSQLRow = ::mysql_fetch_row (inSQLRes);
-				inGEDBackEndMySQL->m_Id = max(inGEDBackEndMySQL->m_Id,(CString(inSQLRow[0]).ToULong()+1));
+				inGEDBackEndMySQL->m_Id = std::max(inGEDBackEndMySQL->m_Id,(CString(inSQLRow[0]).ToULong()+1));
 				::mysql_free_result (inSQLRes);
 			}
 
@@ -2724,7 +2765,7 @@ bool CGEDBackEndMySQL::ExecuteSQLQuery (const CString &inSQL)
 
 				if (m_MySQLOptReconnect.GetLength() > 0)
 				{
-					my_bool inReconnect = m_MySQLOptReconnect.ToBool();
+					bool inReconnect = m_MySQLOptReconnect.ToBool();
 					::mysql_options (&m_MYSQL, MYSQL_OPT_RECONNECT, (const char*)&inReconnect);
 				}
 
@@ -2775,7 +2816,7 @@ bool CGEDBackEndMySQL::ExecuteSQLQuery (const CString &inSQL)
 	
 		if (m_MySQLOptReconnect.GetLength() > 0)
 		{
-			my_bool inReconnect = m_MySQLOptReconnect.ToBool();
+			bool inReconnect = m_MySQLOptReconnect.ToBool();
 			::mysql_options (&m_MYSQL, MYSQL_OPT_RECONNECT, (const char*)&inReconnect);
 		}
 

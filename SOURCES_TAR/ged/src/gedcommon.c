@@ -19,6 +19,8 @@
 */
 
 #include "gedcommon.h"
+#include <openssl/des.h>
+#include <sys/time.h>
 
 //---------------------------------------------------------------------------------------------------------------------------------------
 // ack context instanciation commodity
@@ -603,12 +605,6 @@ bool LoadGEDCfg (const CString &inFile, TGEDCfg &outGEDCfg, int inDepth)
 						{
 							outGEDRelayToCfg.proxy.auth = GED_HTTP_PROXY_AUTH_BASIC;
 						}
-						#ifdef __GED_NTLM__
-						else if (*inArgs[1] == CString("ntlm"))
-						{
-							outGEDRelayToCfg.proxy.auth = GED_HTTP_PROXY_AUTH_NTLM;
-						}
-						#endif
 						else
 						{
 							::fprintf (stderr, 
@@ -1464,12 +1460,6 @@ bool LoadGEDQCfg (const CString &inFile, TGEDQCfg &outGEDQCfg, int inDepth)
 				{
 					outGEDQCfg.proxy.auth = GED_HTTP_PROXY_AUTH_BASIC;
 				}
-				#ifdef __GED_NTLM__
-				else if (*inArgs[1] == CString("ntlm"))
-				{
-					outGEDQCfg.proxy.auth = GED_HTTP_PROXY_AUTH_NTLM;
-				}
-				#endif
 				else
 				{
 					::fprintf (stderr, 
@@ -5584,183 +5574,4 @@ int IsUtf8 (const CString &text)
 }
 
 #endif
-
-//----------------------------------------------------------------------------------------------------------------------------------------
-// NTLM utilities
-//----------------------------------------------------------------------------------------------------------------------------------------
-
-#ifdef __GED_NTLM__
-
-/*  SECTION Copyright (C) 2004 William Preston */
-
-static char base64_chars[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-
-static int pos (char c)
-{
-    char *p;
-    for (p = base64_chars; *p; p++)
-	if (*p == c)
-	    return p - base64_chars;
-    return -1;
-}
-
-#define DECODE_ERROR 0xffffffff
-
-static unsigned int token_decode (const char *token)
-{
-    int i;
-    unsigned int val = 0;
-    int marker = 0;
-    if (strlen(token) < 4)
-	return DECODE_ERROR;
-    for (i = 0; i < 4; i++) {
-	val *= 64;
-	if (token[i] == '=')
-	    marker++;
-	else if (marker > 0)
-	    return DECODE_ERROR;
-	else
-	    val += pos(token[i]);
-    }
-    if (marker > 2)
-	return DECODE_ERROR;
-    return (marker << 24) | val;
-}
-
-int base64_decode (const char *str, void *data)
-{
-    const char *p;
-    unsigned char *q;
-
-    q = (unsigned char*)data;
-    for (p = str; *p && (*p == '=' || strchr(base64_chars, *p)); p += 4) {
-	unsigned int val = token_decode(p);
-	unsigned int marker = (val >> 24) & 0xff;
-	if (val == DECODE_ERROR)
-	    return -1;
-	*q++ = (val >> 16) & 0xff;
-	if (marker < 2)
-	    *q++ = (val >> 8) & 0xff;
-	if (marker < 1)
-	    *q++ = val & 0xff;
-    }
-    return q - (unsigned char *) data;
-}
-
-//----------------------------------------------------------------------------------------------------------------------------------------
-// NTLM phase 1 challenge
-//----------------------------------------------------------------------------------------------------------------------------------------
-CString GetHttpProxyAuthNTLM1 ()
-{
-	// try a minimal NTLM handshake, see http://davenport.sourceforge.net/ntlm.html
-	// the b64 str contains only the NTLMSSP signature, the NTLM message type, and the minimal 
-	// set of flags (Negotiate NTLM and Negotiate OEM)
-	return CString("TlRMTVNTUAABAAAAAgIAAA==");
-}
-
-static void gen_md4_hash (const char* data, int data_len, char *result)
-{
-	MD4_CTX c;
-	char md[16];
-
-	MD4_Init (&c);
-	MD4_Update (&c, data, data_len);
-	MD4_Final ((unsigned char *)md, &c);
-
-	memcpy (result, md, 16);
-}
-
-static int unicodize (char *dst, const char *src)
-{
-	int i = 0;
-	do
-	{
-		dst[i++] = *src;
-		dst[i++] = 0;
-	}
-	while (*src++);
-
-	return i;
-}
-
-static void create_des_keys(const unsigned char *hash, unsigned char *key)
-{
-	key[0] = hash[0];
-	key[1] = ((hash[0]&1)<<7)|(hash[1]>>1);
-	key[2] = ((hash[1]&3)<<6)|(hash[2]>>2);
-	key[3] = ((hash[2]&7)<<5)|(hash[3]>>3);
-	key[4] = ((hash[3]&15)<<4)|(hash[4]>>4);
-	key[5] = ((hash[4]&31)<<3)|(hash[5]>>5);
-	key[6] = ((hash[5]&63)<<2)|(hash[6]>>6);
-	key[7] = ((hash[6]&127)<<1);
-	des_set_odd_parity((DES_cblock *)key);
-}
-
-//----------------------------------------------------------------------------------------------------------------------------------------
-// NTLM phase 3 auth
-//----------------------------------------------------------------------------------------------------------------------------------------
-CString GetHttpProxyAuthNTLM3 (const CString &inUser, const CString &inPass, const CString &inNTLM2)
-{
-	char pwbuf[inUser.GetLength()*2];
-	char buf2[128];
-	char phase3[146];
-
-	char md4_hash[21];
-	char challenge[8], response[24];
-	int i, buflen;
-	DES_cblock key1, key2, key3;
-	des_key_schedule sched1, sched2, sched3;
-
-	gen_md4_hash (pwbuf, unicodize (pwbuf, inPass.Get()) - 2, md4_hash);
-
-	memset (md4_hash + 16, 0, 5);
-
-	base64_decode (inNTLM2.Get(), (void *)buf2);
-
-	for (i=0; i<8; i++) challenge[i] = buf2[i+24];
-
-	create_des_keys ((unsigned char *)md4_hash, key1);
-	des_set_key_unchecked ((des_cblock *)key1, sched1);
-	des_ecb_encrypt ((des_cblock *)challenge, (des_cblock *)response, sched1, DES_ENCRYPT);
-
-	create_des_keys ((unsigned char *)&(md4_hash[7]), key2);
-	des_set_key_unchecked ((des_cblock *)key2, sched2);
-	des_ecb_encrypt ((des_cblock *)challenge, (des_cblock *)&(response[8]), sched2, DES_ENCRYPT);
-
-	create_des_keys ((unsigned char *)&(md4_hash[14]), key3);
-	des_set_key_unchecked ((des_cblock *)key3, sched3);
-	des_ecb_encrypt ((des_cblock *)challenge, (des_cblock *)&(response[16]), sched3, DES_ENCRYPT);
-
-	memset (phase3, 0, sizeof (phase3));
-
-	strcpy (phase3, "NTLMSSP\0");
-	phase3[8] = 3;
-
-	buflen = 0x58 + inUser.GetLength();
-	if (buflen > (int) sizeof (phase3))
-	buflen = sizeof (phase3);
-
-	phase3[0x10] = buflen; 
-	phase3[0x20] = buflen;
-	phase3[0x30] = buflen;
-	phase3[0x38] = buflen;
-
-	phase3[0x14] = 24;
-	phase3[0x16] = phase3[0x14];
-	phase3[0x18] = 0x40;
-	memcpy (&(phase3[0x40]), response, 24);
-
-	phase3[0x24] = inUser.GetLength();
-	phase3[0x26] = phase3[0x24];
-	phase3[0x28] = 0x58;
-	strncpy (&(phase3[0x58]), inUser.Get(), sizeof (phase3) - 0x58);
-
-	phase3[0x3c] = 0x02; 
-	phase3[0x3d] = 0x02;
-
-	return b64_encode (phase3, buflen);
-}
-
-#endif
-
 

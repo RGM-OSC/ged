@@ -19,6 +19,7 @@
 */
 
 #include "ged.h"
+#include <sys/time.h>
 
 //---------------------------------------------------------------------------------------------------------------------------------------
 // connection in context instanciation commodity
@@ -172,9 +173,6 @@ CGEDCtx::CGEDCtx 	    (const TGEDCfg &inGEDCfg, const bool forRun) THROWABLE
 
 	CGEDCtx::m_GEDCtx->SysLog (GED_SYSLOG_INFO, GED_SYSLOG_LEV_DFT, CString("GED ") + GED_VERSION_STR + " loading [gcc " + 
 				   __VERSION__
-	#if defined(__GED_NTLM__)
-		+ ", __GED_NTLM__"
-	#endif
 	#if defined(__GED_DEBUG_SQL__)
 		+ ", __GED_DEBUG_SQL__"
 	#endif
@@ -463,8 +461,8 @@ int CGEDCtx::m_SSLVerifyCallBack (int inOk, X509_STORE_CTX *inCtx)
 		CGEDCtx::m_GEDCtx->SysLog (GED_SYSLOG_ERROR, GED_SYSLOG_LEV_SSL, "SSL certificate verification error " + CString(certerr));
 	}
 
-        if (sname) ::CRYPTO_free (sname);
-        if (iname) ::CRYPTO_free (iname);
+        if (sname) ::CRYPTO_free (sname,"ged.c",463);
+        if (iname) ::CRYPTO_free (iname,"ged.c",463);
 
 	return inOk;
 }
@@ -1993,68 +1991,6 @@ void CGEDClientListener::OnConnect (CObject *inSender, void *)
 			n = ::sscanf (inAnswer.Get(), "%*s %d", &s);
 		}
 		break;
-
-		#ifdef __GED_NTLM__
-		case GED_HTTP_PROXY_AUTH_NTLM :
-		{
-			outCmd += "Proxy-Authorization: NTLM " + ::GetHttpProxyAuthNTLM1() + GED_HTTP_REGEX_CRLF;
-
-			outCmd += GED_HTTP_REGEX_CRLF;
-
-			static_cast <CSocket *> (inSender) -> Send (outCmd.Get(), outCmd.GetLength());
-
-			char ans[1024]; CString inAnswer; while (!inAnswer.Find (GED_HTTP_REGEX_CRLF + GED_HTTP_REGEX_CRLF))
-			{
-				if (static_cast <CSocket *> (inSender) -> Receive (ans, 1024) <= 0)
-					throw new CException (CString("could not read answer from proxy " + 
-						m_GEDConnOutCtx->cfg.proxy.addr + ":" + CString(m_GEDConnOutCtx->cfg.proxy.port)));
-
-				ans[1023] = '\0'; inAnswer += ans;
-			}
-
-			n = ::sscanf (inAnswer.Get(), "%*s %d", &s);
-
-			if (n >= 1 && s == 407)
-			{
-				if (!inAnswer.Find (CString("NTLM"), 0, (size_t*)&n))
-					throw new CException (CString("could not retreive NTLM challenge from proxy " + 
-						m_GEDConnOutCtx->cfg.proxy.addr + ":" + CString(m_GEDConnOutCtx->cfg.proxy.port)));
-
-				n = ::sscanf (inAnswer.Get()+n, "NTLM %s", ans); ans[127]=0;
-
-				if (n != 1)
-					throw new CException (CString("could not retreive NTLM challenge from proxy " + 
-						m_GEDConnOutCtx->cfg.proxy.addr + ":" + CString(m_GEDConnOutCtx->cfg.proxy.port)));
-
-				outCmd = outMethod + m_GEDConnOutCtx->cfg.bind.addr + ":" + CString(m_GEDConnOutCtx->cfg.bind.port) + 
-					 " HTTP/" + m_GEDConnOutCtx->cfg.http.vrs + GED_HTTP_REGEX_CRLF;
-
-				if (m_GEDConnOutCtx->cfg.http.agt != CString())
-					outCmd += "User-Agent: " + m_GEDConnOutCtx->cfg.http.agt + GED_HTTP_REGEX_CRLF;
-
-				outCmd += "Host: " + m_GEDConnOutCtx->cfg.bind.addr + GED_HTTP_REGEX_CRLF;
-
-				outCmd += "Proxy-Authorization: NTLM " + ::GetHttpProxyAuthNTLM3 (m_GEDConnOutCtx->cfg.proxy.user,
-					m_GEDConnOutCtx->cfg.proxy.pass, ans) + GED_HTTP_REGEX_CRLF;
-
-				outCmd += GED_HTTP_REGEX_CRLF;
-
-				static_cast <CSocket *> (inSender) -> Send (outCmd.Get(), outCmd.GetLength());
-
-				inAnswer = ""; while (!inAnswer.Find (GED_HTTP_REGEX_CRLF + GED_HTTP_REGEX_CRLF))
-				{
-					if (static_cast <CSocket *> (inSender) -> Receive (ans, 1024) <= 0)
-						throw new CException (CString("could not read answer from proxy " + 
-							m_GEDConnOutCtx->cfg.proxy.addr + ":" + CString(m_GEDConnOutCtx->cfg.proxy.port)));
-
-					ans[1023] = '\0'; inAnswer += ans;
-				}
-
-				n = ::sscanf (inAnswer.Get(), "%*s %d", &s);
-			}
-		}
-		break;
-		#endif
 	}
 
 	if (n < 1 || s != 200)

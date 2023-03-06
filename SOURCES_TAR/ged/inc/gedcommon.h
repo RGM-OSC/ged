@@ -28,7 +28,7 @@
 #endif
 
 #define GED_MAJOR		1						// major version
-#define GED_MINOR		6						// minor version (may impact backend data structure)
+#define GED_MINOR		8						// minor version (may impact backend data structure)
 #define GED_PATCH		0						// patch level (not impacting backend data structure)
 #define GED_VERSION		(GED_MAJOR*10000+GED_MINOR*100+GED_PATCH)
 
@@ -78,10 +78,8 @@ union semun
 #include <gcrypt.h>
 
 #include <openssl/rand.h>
-#ifdef __GED_NTLM__
 #include <openssl/des.h>
 #include <openssl/md4.h>
-#endif
 
 #include <locale.h>
 
@@ -417,9 +415,6 @@ const static xmlChar *			XML_ELEMENT_NODE_GED_RECORD_STAT_NTR_ATTR_LIGHT		=(cons
 
 #define GED_HTTP_PROXY_AUTH_NONE	0				// no proxy auth method specified
 #define GED_HTTP_PROXY_AUTH_BASIC	1				// basic proxy auth method specified
-#ifdef __GED_NTLM__
-#define GED_HTTP_PROXY_AUTH_NTLM	2				// ntlm proxy auth method specified
-#endif
 
 const static CString			GED_HTTP_REGEX_CRLF		("\r\n");
 
@@ -674,11 +669,6 @@ CString					Base64Encode		(const CString &);
 
 #ifdef __GEDQ__
 int 					IsUtf8 			(const CString &);
-#endif
-
-#ifdef __GED_NTLM__
-CString					GetHttpProxyAuthNTLM1	();
-CString					GetHttpProxyAuthNTLM3	(const CString &, const CString &, const CString &);
 #endif
 
 #endif

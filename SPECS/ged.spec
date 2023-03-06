@@ -12,7 +12,7 @@ BuildRequires: gcc >= 4.0.0
 BuildRequires: pkgconfig
 BuildRequires: libgenerics-devel >= 1.3-4
 BuildRequires: libgcrypt-devel
-BuildRequires: mysql-devel >= 5.0.3
+BuildRequires: mariadb-devel
 BuildRequires: glib2-devel
 BuildRequires: zlib-devel
 #BuildRequires: db4-devel
@@ -61,7 +61,7 @@ Group: Applications/Base
 Requires: %{name} = %{version}
 Requires: libgenerics-devel >= 1.3-4
 Requires: libgcrypt-devel
-Requires: mysql-devel >= 5.0.3
+Requires: mariadb-devel
 Requires: glib2-devel
 Requires: zlib-devel
 #Requires: db4-devel
