@@ -1,7 +1,7 @@
 Summary: Generic Event Dispatcher
 Name: ged
 Version: 1.6
-Release: 12.rgm
+Release: 13.rgm
 Source: %{name}.tar.gz
 BuildRoot: /tmp/%{name}-%{version}
 Group: Applications/Base
@@ -26,7 +26,7 @@ Requires: zlib
 Requires: rgm-base
 
 %description
-GED is a wire designed to handle templated data transmission over HTTP in distributed networks. 
+GED is a wire designed to handle templated data transmission over HTTP in distributed networks.
 
 %package mysql
 Summary: Generic Event Dispatcher MySQL backend
@@ -34,10 +34,9 @@ License: GPL
 Group: Applications/Base
 
 Requires: %{name} = %{version}
-Requires: mariadb-libs
 
 %description mysql
-GED is a wire designed to handle templated data transmission over HTTP in distributed networks. 
+GED is a wire designed to handle templated data transmission over HTTP in distributed networks.
 This is the mysql GED backend.
 
 #%package bdb
@@ -68,14 +67,14 @@ Requires: zlib-devel
 Requires: openssl-devel
 
 %description devel
-GED is a wire designed to handle templated data transmission over HTTP in distributed networks. 
+GED is a wire designed to handle templated data transmission over HTTP in distributed networks.
 This is the devel part as you may want to write your own backend.
 
 %prep
 %setup -q -n %{name}
 
 %build
-    make 
+    make
 
 %install
     rm -rf ${RPM_BUILD_ROOT}
@@ -205,6 +204,9 @@ This is the devel part as you may want to write your own backend.
 %{_libdir}/pkgconfig/%{name}-%{version}.pc
 
 %changelog
+* Tue Apr 25 2023 Vincent Fricou <vfricou@fr.scc.com> - 1.6-13.rgm
+- ged-mysql - remove dependency to mariadb-libs
+
 * Mon Jan 30 2023 Eric Belhomme <ebelhomme@fr.scc.com> - 1.6-12.rgm
 - add type 3 (stargate2noc) document type for stargate communication
 
@@ -253,9 +255,9 @@ This is the devel part as you may want to write your own backend.
 * Wed Feb 20 2019 Samuel Ronciaux <Samuel.ronciaux@gmail.com> - 1.5.9
 - Initial fork
 
-* Wed May 04 2016 Jean-Philippe Levy <jeanphilippe.levy@gmail.com> - 1.5.9  
+* Wed May 04 2016 Jean-Philippe Levy <jeanphilippe.levy@gmail.com> - 1.5.9
 - Add systemd service
-- Fix do not copy gedhdb.cfg 
+- Fix do not copy gedhdb.cfg
 - Fix ged_rss.conf
 
 * Wed May 04 2016 Michael Aubertin <michael.aubertin@gmail.com> - 1.5-8
@@ -272,7 +274,7 @@ This is the devel part as you may want to write your own backend.
 - Fix casting variables for 64 Bits arch.
 
 * Sat Jun 29 2013 Michael Aubertin <michael.aubertin@gmail.com> - 1.5.5
-- Remove glib forgetted dependencies. 
+- Remove glib forgetted dependencies.
 - Fix ged2rss group bug.
 
 * Wed Jun 26 2013 Michael Aubertin <michael.aubertin@gmail.com> - 1.5.4
@@ -296,7 +298,7 @@ This is the devel part as you may want to write your own backend.
 - Handling my database issue regarding mysql backend.
 
 * Fri May 11 2012 Michael Aubertin <michael.aubertin@gmail.com> - 1.4.9
-- Hacking script for migration facilities 
+- Hacking script for migration facilities
 - Fixing 0 addition in case of uncomplete gedq -push packet.
 - Change ack default time in conf file
 - Remove sync as default in gedt.cfg
@@ -314,7 +316,7 @@ This is the devel part as you may want to write your own backend.
 - Fixing duplicate id in case of multiple cross migration queue packet
 
 * Mon Apr 02 2012 Michael Aubertin <michael.aubertin@gmail.com> - 1.4.4
-- Fixing duplicate id using multiple SYNC queue. 
+- Fixing duplicate id using multiple SYNC queue.
 - Set AUTO_INCREMENT to all data packet tables.
 
 * Fri Mar 30 2012 Michael Aubertin <michael.aubertin@gmail.com> - 1.4.3
@@ -331,7 +333,7 @@ This is the devel part as you may want to write your own backend.
 
 * Sun Oct 2 2011 Jeremie Bernard <gremi@users.sourceforge.net> - 1.2.11
 - Backend config cache is no more written when finalizing (but when initializing)
-- CREATE TABLE has been added the IF NOT EXISTS option which is permissive 
+- CREATE TABLE has been added the IF NOT EXISTS option which is permissive
 - DROP TABLE has been added the IF EXIXTS option which is permissive
 
 * Wed Sep 14 2011 Jeremie Bernard <gremi@users.sourceforge.net> - 1.2.10
@@ -341,7 +343,7 @@ This is the devel part as you may want to write your own backend.
 - TTL backend nrecords queue inc patch
 
 * Wed May 12 2010 Jeremie Bernard <gremi@users.sourceforge.net> - 1.2.8
-- potential TTL backend dead threads while forking patch 
+- potential TTL backend dead threads while forking patch
 
 * Fri Apr 9 2010 Jeremie Bernard <gremi@users.sourceforge.net> - 1.2.7
 - mysql filters (< > ' ") options addon
@@ -360,7 +362,7 @@ This is the devel part as you may want to write your own backend.
 * Wed Nov 25 2009 Jeremie Bernard <gremi@users.sourceforge.net> - 1.2.3
 - mysql mode no backslash escapes option addon
 
-* Sat May 30 2009 Jeremie Bernard <gremi@users.sourceforge.net> - 1.2.2 
+* Sat May 30 2009 Jeremie Bernard <gremi@users.sourceforge.net> - 1.2.2
 - nosync flag implementation
 - performance inc, light xml format option
 - local file socket bindings
@@ -368,7 +370,7 @@ This is the devel part as you may want to write your own backend.
 - history queue gedq drop id list arg
 - mysql backend proposal
 
-* Fri Feb 20 2009 Jeremie Bernard <gremi@users.sourceforge.net> - 1.2.1 
+* Fri Feb 20 2009 Jeremie Bernard <gremi@users.sourceforge.net> - 1.2.1
 - non root low port binding enabling
 - ged/gedq security enhencement (peer data and request access notion)
 - gedq sem patch (exception catch in ctx constructor)
@@ -383,7 +385,7 @@ This is the devel part as you may want to write your own backend.
 - ged daemon mode
 - mysql backend temporary removed
 
-* Tue Dec 30 2008 Jeremie Bernard <gremi@users.sourceforge.net> - 1.2.0 
+* Tue Dec 30 2008 Jeremie Bernard <gremi@users.sourceforge.net> - 1.2.0
 - lzo removal, zlib use instead
 - http/s tunnel implementation
 - proxy basic and ntlm auth handling
