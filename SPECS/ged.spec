@@ -1,7 +1,7 @@
 Summary: Generic Event Dispatcher
 Name: ged
 Version: 1.6
-Release: 13.rgm
+Release: 14.rgm
 Source: %{name}.tar.gz
 BuildRoot: /tmp/%{name}-%{version}
 Group: Applications/Base
@@ -204,6 +204,9 @@ This is the devel part as you may want to write your own backend.
 %{_libdir}/pkgconfig/%{name}-%{version}.pc
 
 %changelog
+* Wed Dec 13 2023 Vincent Fricou <vfricou@fr.scc.com> - 1.6-14.rgm
+- fix purge_event.sh script to correctly drop events from active queue
+
 * Tue Apr 25 2023 Vincent Fricou <vfricou@fr.scc.com> - 1.6-13.rgm
 - ged-mysql - remove dependency to mariadb-libs
 

@@ -6,3 +6,5 @@ f79d091d7aad48b9882818d9e29e519cdbd11047:SOURCES_TAR/ged-1.6/scripts/purge_event
 00ab4b782938186a3e41ed780ed11dc6cdf62857:SOURCES_TAR/ged-1.6/etc.in/ssl/easy-rsa/keys/geds.key:private-key:1
 00ab4b782938186a3e41ed780ed11dc6cdf62857:SOURCES_TAR/ged-1.6/etc.in/ssl/gedc.key:private-key:1
 00ab4b782938186a3e41ed780ed11dc6cdf62857:SOURCES_TAR/ged-1.6/etc.in/ssl/geds.key:private-key:1
+SOURCES_TAR/ged/scripts/purge_event.sh:generic-password:18
+SOURCES_TAR/ged/scripts/purge_event.sh:generic-api-key:18
